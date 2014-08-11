@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap 101 Template</title>
+    <title>Fantasy Premier League</title>
 
     <!-- Bootstrap -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
@@ -15,9 +15,167 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- custom CSS -->
+    <link href="css/fantasypl.css" rel="stylesheet">
+
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <span class="navbar-brand">Fantasy Premier League</span>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="disabled"><a href="#">Statistics</a></li>
+            <li class="disabled"><a href="#">Standings</a></li>
+            <li class="active"><a href="#">Lineup</a></li>
+            <li class="disabled"><a href="#">Add Players</a></li>
+          </ul>
+          <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Search players">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Andy Pymont</a></li>
+            <li><a href="#">sign out</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <div class="container">
+      
+      <div>
+        <button class="btn btn-primary">Save Lineup</button></p>
+      </div>
+
+      <div class="table-responsive col-md-9">
+        <table class="table table-striped table-condensed">
+          <tr>
+            <th class="col-md-1">Position</th>
+            <th class="col-md-2">Name</th>
+            <th class="col-md-2">Team</th>
+            <th class="col-md-3">Next Match</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-g">G</button></td>
+            <td>Costel Pantilimon</td>
+            <td>Sunderland</td>
+            <td>West Bromwich Albion (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
+            <td>Martin Skrtel</td>
+            <td>Liverpool</td>
+            <td>Southampton (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
+            <td>Brede Hangeland</td>
+            <td>Crystal Palace</td>
+            <td>Arsenal (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
+            <td>Steven Caulker</td>
+            <td>Queens Park Rangers</td>
+            <td>Hull City (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
+            <td>Sylvain Distin</td>
+            <td>Everton</td>
+            <td>Leicester City (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
+            <td>Rafael</td>
+            <td>Manchester United</td>
+            <td>Swansea City (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
+            <td>Kevin Mirallas</td>
+            <td>Everton</td>
+            <td>Leicester City (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
+            <td>Cesc Fàbregas</td>
+            <td>Chelsea</td>
+            <td>Burnley (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
+            <td>Jonjo Shelvey</td>
+            <td>Swansea City</td>
+            <td>Manchester United (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-f">F</button></td>
+            <td>Robin van Persie</td>
+            <td>Manchester United</td>
+            <td>Swansea City (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" checked="true"> <button type="button" class="btn btn-default posicon-f">F</button></td>
+            <td>Christian Benteke</td>
+            <td>Aston Villa</td>
+            <td>Stoke City (A)</td>
+          </tr>
+        </table>
+
+        <h4>Substitutes</h4>
+
+        <table class="table table-striped">
+          <tr>
+            <th class="col-md-1">Position</th>
+            <th class="col-md-2">Name</th>
+            <th class="col-md-2">Team</th>
+            <th class="col-md-3">Next Match</th>
+          </tr>
+          <tr>
+            <td><input type="checkbox"> <button type="button" class="btn btn-default posicon-m">M</button></td>
+            <td>Robert Snodgrass</td>
+            <td>Hull City</td>
+            <td>Queens Park Rangers (A)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"> <button type="button" class="btn btn-default posicon-m">M</button></td>
+            <td>Siem de Jong</td>
+            <td>Newcastle United</td>
+            <td>Manchester City (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"> <button type="button" class="btn btn-default posicon-f">F</button></td>
+            <td>Brown Ideye</td>
+            <td>West Bromwich Albion</td>
+            <td>Sunderland (H)</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"> <button type="button" class="btn btn-default posicon-f">F</button></td>
+            <td>Bafétimbi Gomis</td>
+            <td>Swansea City</td>
+            <td>Manchester United (A)</td>
+          </tr>
+        </table>
+
+      </div>
+
+    </div>
 
     <script src="//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>

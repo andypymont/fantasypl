@@ -1,2 +1,2 @@
 cd static
-python -m SimpleHttpServer
+python -m SimpleHTTPServer
