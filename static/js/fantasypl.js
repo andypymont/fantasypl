@@ -62,4 +62,7 @@ $(document).ready(function() {
 	$('.startercheck').change(checkboxToggle);
 	$('.subcheck').change(checkboxToggle);
 
+	var formation = getTeamFormation();
+	$('.formation').text("Current Formation: ".concat(formation));
+
 });
