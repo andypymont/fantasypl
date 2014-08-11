@@ -17,7 +17,7 @@
     <![endif]-->
 
     <!-- custom CSS -->
-    <link href="css/fantasypl.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/fantasypl.css') }}" rel="stylesheet">
 
   </head>
   <body>
@@ -274,6 +274,6 @@
 
     <script src="//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="js/fantasypl.js"></script>
+    <script src="{{ url_for('static', filename='js/fantasypl.js') }}"></script>
   </body>
 </html>
