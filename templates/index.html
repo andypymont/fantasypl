@@ -75,97 +75,14 @@
             <th class="col-md-2">Team</th>
             <th class="col-md-3">Next Match</th>
           </tr>
-          <tr class="starterrow collapse in" id="starterrow1">
-            <td><input type="checkbox" class="startercheck" id="startercheck1" checked="true"> <button type="button" class="btn btn-default posicon-g">G</button></td>
-            <td>Costel Pantilimon</td>
-            <td>Sunderland</td>
+          {% for player in players %}
+          <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
+            <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" checked="true"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+            <td>{{ player.name }}</td>
+            <td>{{ player.club }}</td>
             <td>West Bromwich Albion (A)</td>
           </tr>
-          <tr class="starterrow collapse in" id="starterrow2">
-            <td><input type="checkbox" class="startercheck" id="startercheck2" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Martin Skrtel</td>
-            <td>Liverpool</td>
-            <td>Southampton (H)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow3">
-            <td><input type="checkbox" class="startercheck" id="startercheck3" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Brede Hangeland</td>
-            <td>Crystal Palace</td>
-            <td>Arsenal (A)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow4">
-            <td><input type="checkbox" class="startercheck" id="startercheck4" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Steven Caulker</td>
-            <td>Queens Park Rangers</td>
-            <td>Hull City (H)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow5">
-            <td><input type="checkbox" class="startercheck" id="startercheck5" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Sylvain Distin</td>
-            <td>Everton</td>
-            <td>Leicester City (A)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow6">
-            <td><input type="checkbox" class="startercheck" id="startercheck6" checked="true"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Rafael</td>
-            <td>Manchester United</td>
-            <td>Swansea City (H)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow7">
-            <td><input type="checkbox" class="startercheck" id="startercheck7" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Kevin Mirallas</td>
-            <td>Everton</td>
-            <td>Leicester City (A)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow8">
-            <td><input type="checkbox" class="startercheck" id="startercheck8" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Cesc Fàbregas</td>
-            <td>Chelsea</td>
-            <td>Burnley (A)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow9">
-            <td><input type="checkbox" class="startercheck" id="startercheck9" checked="true"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Jonjo Shelvey</td>
-            <td>Swansea City</td>
-            <td>Manchester United (A)</td>
-          </tr>
-          <tr class="starterrow collapse out" id="starterrow10">
-            <td><input type="checkbox" class="startercheck" id="startercheck10"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Robert Snodgrass</td>
-            <td>Hull City</td>
-            <td>Queens Park Rangers (A)</td>
-          </tr>
-          <tr class="starterrow collapse out" id="starterrow11">
-            <td><input type="checkbox" class="startercheck" id="startercheck11"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Siem de Jong</td>
-            <td>Newcastle United</td>
-            <td>Manchester City (H)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow12">
-            <td><input type="checkbox" class="startercheck" id="startercheck12" checked="true"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Robin van Persie</td>
-            <td>Manchester United</td>
-            <td>Swansea City (H)</td>
-          </tr>
-          <tr class="starterrow collapse in" id="starterrow13">
-            <td><input type="checkbox" class="startercheck" id="startercheck13" checked="true"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Christian Benteke</td>
-            <td>Aston Villa</td>
-            <td>Stoke City (A)</td>
-          </tr>
-          <tr class="starterrow collapse out" id="starterrow14">
-            <td><input type="checkbox" class="startercheck" id="startercheck14"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Bafétimbi Gomis</td>
-            <td>Swansea City</td>
-            <td>Manchester United (A)</td>
-          </tr>
-          <tr class="starterrow collapse out" id="starterrow15">
-            <td><input type="checkbox" class="startercheck" id="startercheck15"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Brown Ideye</td>
-            <td>West Bromwich Albion</td>
-            <td>Sunderland (H)</td>
-          </tr>
-        </table>
+          {% endfor %}
 
         <h4>Substitutes</h4>
 
@@ -176,96 +93,14 @@
             <th class="col-md-2">Team</th>
             <th class="col-md-3">Next Match</th>
           </tr>
-          <tr class="subrow collapse out" id="subrow1">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck1"> <button type="button" class="btn btn-default posicon-g">G</button></td>
-            <td>Costel Pantilimon</td>
-            <td>Sunderland</td>
+          {% for player in players %}
+          <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
+            <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+            <td>{{ player.name }}</td>
+            <td>{{ player.club }}</td>
             <td>West Bromwich Albion (A)</td>
           </tr>
-          <tr class="subrow collapse out" id="subrow2">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck2"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Martin Skrtel</td>
-            <td>Liverpool</td>
-            <td>Southampton (H)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow3">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck3"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Brede Hangeland</td>
-            <td>Crystal Palace</td>
-            <td>Arsenal (A)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow4">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck4"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Steven Caulker</td>
-            <td>Queens Park Rangers</td>
-            <td>Hull City (H)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow5">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck5"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Sylvain Distin</td>
-            <td>Everton</td>
-            <td>Leicester City (A)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow6">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck6"> <button type="button" class="btn btn-default posicon-d">D</button></td>
-            <td>Rafael</td>
-            <td>Manchester United</td>
-            <td>Swansea City (H)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow7">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck7"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Kevin Mirallas</td>
-            <td>Everton</td>
-            <td>Leicester City (A)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow8">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck8"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Cesc Fàbregas</td>
-            <td>Chelsea</td>
-            <td>Burnley (A)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow9">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck9"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Jonjo Shelvey</td>
-            <td>Swansea City</td>
-            <td>Manchester United (A)</td>
-          </tr>
-          <tr class="subrow collapse in" id="subrow10">
-            <td><input type="checkbox" class="subcheck" id="subcheck10"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Robert Snodgrass</td>
-            <td>Hull City</td>
-            <td>Queens Park Rangers (A)</td>
-          </tr>
-          <tr class="subrow collapse in" id="subrow11">
-            <td><input type="checkbox" class="subcheck" id="subcheck11"> <button type="button" class="btn btn-default posicon-m">M</button></td>
-            <td>Siem de Jong</td>
-            <td>Newcastle United</td>
-            <td>Manchester City (H)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow12">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck12"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Robin van Persie</td>
-            <td>Manchester United</td>
-            <td>Swansea City (H)</td>
-          </tr>
-          <tr class="subrow collapse out" id="subrow13">
-            <td><input type="checkbox" class="subcheck" checked="true" id="subcheck13"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Christian Benteke</td>
-            <td>Aston Villa</td>
-            <td>Stoke City (A)</td>
-          </tr>
-          <tr class="subrow collapse in" id="subrow14">
-            <td><input type="checkbox" class="subcheck" id="subcheck14"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Bafétimbi Gomis</td>
-            <td>Swansea City</td>
-            <td>Manchester United (A)</td>
-          </tr>
-          <tr class="subrow collapse in" id="subrow15">
-            <td><input type="checkbox" class="subcheck" id="subcheck15"> <button type="button" class="btn btn-default posicon-f">F</button></td>
-            <td>Brown Ideye</td>
-            <td>West Bromwich Albion</td>
-            <td>Sunderland (H)</td>
-          </tr>
+          {% endfor %}
         </table>
 
       </div>

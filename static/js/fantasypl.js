@@ -6,10 +6,10 @@ function getTeamFormation() {
 
 	$('.starterrow.in').each(function() {
 		$(this).find('.btn').each(function() {
-			if ($(this).hasClass("posicon-g")) { g++; }
-			if ($(this).hasClass("posicon-d")) { d++; }
-			if ($(this).hasClass("posicon-m")) { m++; }
-			if ($(this).hasClass("posicon-f")) { f++; }
+			if ($(this).hasClass("posicon-G")) { g++; }
+			if ($(this).hasClass("posicon-D")) { d++; }
+			if ($(this).hasClass("posicon-M")) { m++; }
+			if ($(this).hasClass("posicon-F")) { f++; }
 		});
 	});
 
