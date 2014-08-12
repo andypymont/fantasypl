@@ -47,10 +47,11 @@ def login():
 	if request.method == 'POST':
 		username = request.form.get('username', '')
 		password = request.form.get('password', '')
+		rememberme = request.form.get('rememberme', False)
 
 		user = load_user(username)
 		if user and user.check_password(password):
-			login_user(user)
+			login_user(user, remember=rememberme)
 			return redirect(url_for('lineup'))
 	return render_template('login.html')
 
