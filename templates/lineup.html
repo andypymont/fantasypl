@@ -57,54 +57,57 @@
     </nav>
 
     <div class="container">
-      
-      <div class="container col-md-12">
-        <button class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button>
-        <div class="col-md-2"></div>
-        <div class="col-md-3 formation text-right">Current Formation: 1-5-3-2</div>
-        <div class="col-md-1"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
-      </div>
+      <form role="form" method="post" action="{{ url_for('lineup_submit') }}">
 
-      <hr>
+        <div class="container col-md-12">
+          <button typ="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button>
+          <div class="col-md-2"></div>
+          <div class="col-md-3 formation text-right">Current Formation: 1-5-3-2</div>
+          <div class="col-md-1"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
+        </div>
 
-      <div class="table-responsive col-md-9">
-        <table class="table table-condensed">
-          <tr>
-            <th class="col-md-1">Position</th>
-            <th class="col-md-2">Name</th>
-            <th class="col-md-2">Team</th>
-            <th class="col-md-3">Next Match</th>
-          </tr>
-          {% for player in players %}
-          <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
-            <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" checked="true"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
-            <td>{{ player.name }}</td>
-            <td>{{ player.club }}</td>
-            <td>West Bromwich Albion (A)</td>
-          </tr>
-          {% endfor %}
+        <hr>
 
-        <h4>Substitutes</h4>
+        <div class="table-responsive col-md-9">
+          <table class="table table-condensed">
+            <tr>
+              <th class="col-md-1">Position</th>
+              <th class="col-md-2">Name</th>
+              <th class="col-md-2">Team</th>
+              <th class="col-md-3">Next Match</th>
+            </tr>
+            {% for player in players %}
+            <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
+              <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" checked="true"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td>{{ player.name }}</td>
+              <td>{{ player.club }}</td>
+              <td>West Bromwich Albion (A)</td>
+            </tr>
+            {% endfor %}
+          </table>
 
-        <table class="table table-condensed">
-          <tr>
-            <th class="col-md-1">Position</th>
-            <th class="col-md-2">Name</th>
-            <th class="col-md-2">Team</th>
-            <th class="col-md-3">Next Match</th>
-          </tr>
-          {% for player in players %}
-          <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
-            <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
-            <td>{{ player.name }}</td>
-            <td>{{ player.club }}</td>
-            <td>West Bromwich Albion (A)</td>
-          </tr>
-          {% endfor %}
-        </table>
+          <h4>Substitutes</h4>
 
-      </div>
+          <table class="table table-condensed">
+            <tr>
+              <th class="col-md-1">Position</th>
+              <th class="col-md-2">Name</th>
+              <th class="col-md-2">Team</th>
+              <th class="col-md-3">Next Match</th>
+            </tr>
+            {% for player in players %}
+            <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
+              <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}"> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td>{{ player.name }}</td>
+              <td>{{ player.club }}</td>
+              <td>West Bromwich Albion (A)</td>
+            </tr>
+            {% endfor %}
+          </table>
 
+        </div>
+
+      </form>
     </div>
 
     <script src="//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js"></script>
