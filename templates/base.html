@@ -55,6 +55,10 @@
             <li><a href="{{ url_for('change_password') }}">change password</a></li>
             <li><a href="{{ url_for('logout') }}">sign out</a></li>
           </ul>
+          {% else %}
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{ url_for('login') }}">sign in</a></li>
+          </ul>
           {% endif %}
         </div><!-- /.navbar-collapse -->
       </div><!-- /.container-fluid -->
