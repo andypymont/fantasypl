@@ -66,6 +66,7 @@ def lineup_submit():
 
 		if valid_formation(player for player in players if player['startingxi'] == '1'):
 			db.save_all(players, 'players')
+			flash('Lineup saved')
 		else:
 			flash('Lineup reverted as was not a valid formation (please use 1 G, 3-5 D, 3-5 M, 1-3 F)')
 
