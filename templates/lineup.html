@@ -25,7 +25,7 @@
               <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" name="startercheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
-              <td>West Bromwich Albion (A)</td>
+              <td>{{ next_opponents[player.club] }}</td>
             </tr>
             {% endfor %}
           </table>
@@ -44,7 +44,7 @@
               <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}" name="subcheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
-              <td>West Bromwich Albion (A)</td>
+              <td>{{ next_opponents[player.club] }}</td>
             </tr>
             {% endfor %}
           </table>
