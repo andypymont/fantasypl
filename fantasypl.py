@@ -20,6 +20,13 @@ def next_opponents():
 	return dict([(club['name'], club['nextopponent']) for club in db.get('clubs')])
 
 @app.route('/')
+@app.route('/standings/')
+def standings():
+	teams = sorted(db.get('users'),
+				   key=lambda user: (-user.get('points', 0), -user.get('score', 0), 
+				   					 -user.get('tiebreak', 0), user.get('draftorder', 0)))
+	return render_template('standings.html', activepage="standings", current_user=current_user, teams=teams)
+
 @app.route('/lineup/')
 @login_required
 def lineup():

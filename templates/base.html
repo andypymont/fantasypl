@@ -38,8 +38,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
             <li class="disabled"><a href="#">Statistics</a></li>
-            <li class="disabled"><a href="#">Standings</a></li>
-            <li class="{% if activepage == "lineup" %}active{% endif %}"><a href="{{ url_for('lineup') }}">Lineup</a></li>
+            <li{% if activepage == "standings" %} class="active"{% endif %}><a href="{{ url_for('standings') }}">Standings</a></li>
+            <li{% if activepage == "lineup" %} class="active"{% endif %}><a href="{{ url_for('lineup') }}">Lineup</a></li>
             <li class="disabled"><a href="#">Add Players</a></li>
           </ul>
           <!--<form class="navbar-form navbar-left" role="search">

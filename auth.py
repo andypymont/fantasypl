@@ -63,7 +63,7 @@ def login():
 @login_required
 def logout():
 	logout_user()
-	return redirect(url_for('lineup'))
+	return redirect('/')
 
 @app.route('/change-password/', methods=["GET", "POST"])
 @login_required
@@ -78,6 +78,6 @@ def change_password():
 			flash('Password not changed: Please use a password at least 8 characters long.')
 		else:
 			current_user.change_password(new_password)
-			return redirect(url_for('lineup'))
+			return redirect(url_for('/'))
 
 	return render_template('changepassword.html')
