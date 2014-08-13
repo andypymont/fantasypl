@@ -6,7 +6,7 @@ except ImportError:
 import os
 
 from app import app, db
-from flask import abort, redirect, render_template, request, url_for
+from flask import abort, flash, redirect, render_template, request, url_for
 from auth import current_user, login_manager, login_required
 
 app.config.update(dict(DEBUG=True,
@@ -18,6 +18,23 @@ def get_lineup(team):
 
 def next_opponents():
 	return dict([(club['name'], club['nextopponent']) for club in db.get('clubs')])
+
+def formation(players):
+	rv = dict()
+	for player in players:
+		count = rv.get(player['position'], 0) + 1
+		rv[player['position']] = count
+	return rv
+
+def valid_formation(players):
+	valid_formations = (dict(G=1, D=5, M=3, F=2),
+						dict(G=1, D=5, M=4, F=1),
+						dict(G=1, D=4, M=5, F=1),
+						dict(G=1, D=4, M=4, F=2),
+						dict(G=1, D=4, M=3, F=3),
+						dict(G=1, D=3, M=5, F=2),
+						dict(G=1, D=3, M=4, F=3))
+	return formation(players) in valid_formations
 
 @app.route('/')
 @app.route('/standings/')
@@ -47,7 +64,10 @@ def lineup_submit():
 			else:
 				player['startingxi'] = '0'
 
-		db.save_all(players, 'players')
+		if valid_formation(player for player in players if player['startingxi'] == '1'):
+			db.save_all(players, 'players')
+		else:
+			flash('Lineup reverted as was not a valid formation (please use 1 G, 3-5 D, 3-5 M, 1-3 F)')
 
 		return redirect(url_for('lineup'))
 
