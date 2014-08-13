@@ -41,7 +41,7 @@
           <ul class="nav navbar-nav">
             <li{% if activepage == "standings" %} class="active"{% endif %}><a href="{{ url_for('standings') }}">Standings</a></li>
             <li{% if activepage == "lineup" %} class="active"{% endif %}><a href="{{ url_for('lineup') }}">Lineup</a></li>
-            <li{% if activepage == 'changes' %} class="active"{% endif %}><a href="#">{% if current_user['claims'] %}<span class="badge pull-right">{{ len(current_user['claims']) }}</span>{% endif %}Changes</a></li>
+            <li{% if activepage == 'changes' %} class="active"{% endif %}><a href="#">Changes</a></li>
           </ul>
           <!--<form class="navbar-form navbar-left" role="search">
             <div class="form-group">

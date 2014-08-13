@@ -37,6 +37,9 @@ class User(object):
 		self.dbuser['password'] = generate_password_hash(newpassword)
 		db.save(self.dbuser)
 
+	def player_claims(self):
+		return self.dbuser['claims']
+
 @login_manager.user_loader
 def load_user(userid):
 	try:
