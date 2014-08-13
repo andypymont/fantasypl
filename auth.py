@@ -57,6 +57,8 @@ def login():
 		if user and user.check_password(password):
 			login_user(user, remember=rememberme)
 			return redirect(request.args.get('next', url_for('lineup')))
+		else:
+			flash('Username/password combination not recognised')
 	return render_template('login.html')
 
 @app.route('/logout')
