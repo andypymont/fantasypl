@@ -41,7 +41,7 @@
           <ul class="nav navbar-nav">
             <li{% if activepage == "standings" %} class="active"{% endif %}><a href="{{ url_for('standings') }}">Standings</a></li>
             <li{% if activepage == "lineup" %} class="active"{% endif %}><a href="{{ url_for('lineup') }}">Lineup</a></li>
-            <li{% if activepage == 'changes' %} class="active"{% endif %}><a href="#">Changes</a></li>
+            <li{% if activepage == 'players' %} class="active"{% endif %}><a href="{{ url_for('players') }}">Players</a></li>
           </ul>
           <!--<form class="navbar-form navbar-left" role="search">
             <div class="form-group">
@@ -51,10 +51,10 @@
           </form> -->
           {% if current_user.is_authenticated() %}
           <ul class="nav navbar-nav navbar-right">
-            <li><a><b>{{ current_user.get_name() }}</b></a></li>
             <li><a href="{{ url_for('change_password') }}">change password</a></li>
             <li><a href="{{ url_for('logout') }}">sign out</a></li>
           </ul>
+          <p class="navbar-text navbar-right">signed in as <b>{{ current_user.get_name() }}</b></p>
           {% else %}
           <ul class="nav navbar-nav navbar-right">
             <li><a href="{{ url_for('login') }}">sign in</a></li>

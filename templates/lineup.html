@@ -22,7 +22,7 @@
             </tr>
             {% for player in players %}
             <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
-              <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" name="startercheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" name="startercheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>
@@ -41,7 +41,7 @@
             </tr>
             {% for player in players %}
             <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
-              <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}" name="subcheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}" name="subcheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>

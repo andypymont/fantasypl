@@ -3,4 +3,11 @@ from flask import Flask
 from inception import Database
 
 app = Flask(__name__)
-db = Database(os.path.join('db', 'fantasypl.db'))
+
+try:
+	from settings import settings
+	app.config.update(settings)
+except ImportError:
+	pass
+	
+db = Database(app.config.get('DATABASE', ':memory:'))

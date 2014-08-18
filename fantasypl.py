@@ -6,11 +6,9 @@ except ImportError:
 import os
 
 from app import app, db
-from flask import abort, flash, redirect, render_template, request, url_for
 from auth import current_user, login_manager, login_required
-
-app.config.update(dict(DEBUG=True,
-					   SECRET_KEY='Development key'))
+from flask import abort, flash, redirect, render_template, request, url_for
+from math import ceil
 
 def get_lineup(team):
 	return sorted(db.get('players', {'team': team}),
@@ -35,6 +33,23 @@ def valid_formation(players):
 						dict(G=1, D=3, M=5, F=2),
 						dict(G=1, D=3, M=4, F=3))
 	return formation(players) in valid_formations
+
+def paginated_players(page):
+	players = db.get('players')
+	pages = int(ceil(len(players) / 10.0))
+	if page > pages:
+		page = pages
+
+	center = max(11, page)
+
+	showpages = range(center - 10, max(center + 10, pages))
+
+	showpages = [p for p in xrange(center - 10, page + 10) if p > 0]
+	for p in xrange(20 - len(showpages)):
+		showpages.append()
+
+	return dict(page=page,
+				pages=pages)
 
 @app.route('/')
 @app.route('/standings/')
@@ -71,6 +86,14 @@ def lineup_submit():
 			flash('Lineup reverted as was not a valid formation (please use 1 G, 3-5 D, 3-5 M, 1-3 F)')
 
 		return redirect(url_for('lineup'))
+
+@app.route('/players/')
+def players():
+	players = db.get('players')
+	pages = int(ceil(len(players) / 10.0))
+	page = int(request.args.get('page', 1))
+
+	return render_template('players.html', activepage="players", page=page, pages=pages, players=players)
 
 if __name__ == '__main__':
 	app.run()
