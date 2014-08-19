@@ -18,12 +18,18 @@
 		{% endfor %}
 	</table>
 
+	{% if pagination %}
 	<ul class="pagination">
-		{% if page == 1 %}<li class="disabled"><span>&laquo;</span></li>{% else %}<li><a href="#">&laquo;</a></li>{% endif %}
-		{% for pg in range(1, pages) %}
-		<li{% if page == pg %} class="active"{% endif %}><a href="{{ url_for('players', p=pg) }}">{{ pg }}</a></li>
+		{% if pagination.prev %}<li><a href="{{ url_for('players', p=(pagination.current - 1), q=query) }}">&laquo;</a></li>{% else %}<li class="disabled"><span>&laquo;</span></li>{% endif %}
+		{% for pg in pagination.pages %}
+			{% if pg > pagination.pagecount %}
+			<li class="disabled"><span>{{ pg }}</span></li>
+			{% else %}
+			<li{% if pg == pagination.current %} class="active"{% endif %}><a href="{{ url_for('players', p=pg, q=query) }}">{{ pg }}</a></li>
+			{% endif %}
 		{% endfor %}
-		<li><a href="#">&raquo;</a></li>
+		{% if pagination.next %}<li><a href="{{ url_for('players', p=(pagination.current + 1), q=query) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
 	</ul>
+	{% endif %}
 </div>
 {% endblock %}

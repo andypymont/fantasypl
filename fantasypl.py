@@ -34,22 +34,16 @@ def valid_formation(players):
 						dict(G=1, D=3, M=4, F=3))
 	return formation(players) in valid_formations
 
-def paginated_players(page):
-	players = db.get('players')
-	pages = int(ceil(len(players) / 10.0))
-	if page > pages:
-		page = pages
+def pagination(current_page, pages):
+	after = min(pages - current_page, 2) + 1
+	before = 5 - after
+	pageset = range(max(current_page - before, 1), max(current_page + after, 6))
 
-	center = max(11, page)
-
-	showpages = range(center - 10, max(center + 10, pages))
-
-	showpages = [p for p in xrange(center - 10, page + 10) if p > 0]
-	for p in xrange(20 - len(showpages)):
-		showpages.append()
-
-	return dict(page=page,
-				pages=pages)
+	return dict(pages=pageset,
+				pagecount=pages,
+				current=current_page,
+				prev=(current_page > 1),
+				next=(current_page < pages))
 
 @app.route('/')
 @app.route('/standings/')
@@ -89,11 +83,24 @@ def lineup_submit():
 
 @app.route('/players/')
 def players():
-	players = db.get('players')
-	pages = int(ceil(len(players) / 10.0))
-	page = int(request.args.get('page', 1))
+	query = request.args.get('q', '')
+	def search(playername):
+		return (query == '') or (query in playername)
 
-	return render_template('players.html', activepage="players", page=page, pages=pages, players=players)
+	players = db.get('players', {'searchname': search})
+
+	pages = int(ceil(len(players) / 10.0))
+	page = int(request.args.get('p', 1))
+
+	pagin = pagination(page, pages)
+
+	players = players[((page - 1) * 10):(page * 10)]
+
+	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query)
+
+@app.route('/players/search/', methods=['POST'])
+def search_players():
+	return redirect(url_for('players', q=request.form.get('search', '')))
 
 if __name__ == '__main__':
 	app.run()
