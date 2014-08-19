@@ -57,6 +57,20 @@ function checkboxToggle() {
 
 };
 
+function pad(v, size) {
+	var s = "" + v;
+	while (s.length < size) {
+		s = "0" + s;
+	}
+	return s;
+}
+
+function prettyDate(dt) {
+	var weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+	return weekdays[dt.getDay()] + " " + pad(dt.getDate(), 2) + "/" + pad(dt.getMonth(), 2) + "/" + pad(dt.getFullYear(), 4) + " " 
+		   + pad(dt.getHours(), 2) + ":" + pad(dt.getMinutes(), 2);
+}
+
 $(document).ready(function() {
 
 	$('.startercheck').change(checkboxToggle);
@@ -64,5 +78,8 @@ $(document).ready(function() {
 
 	var formation = getTeamFormation();
 	$('.formation').text("Current Formation: ".concat(formation));
+
+	var deadline = new Date(TIME_DEADLINE);
+	$('.deadline').text("Lineup deadline: ".concat(prettyDate(deadline)));
 
 });
