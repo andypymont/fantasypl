@@ -57,10 +57,6 @@ def pagination(current_page, pages):
 				prev=(current_page > 1),
 				next=(current_page < pages))
 
-def server_time():
-	now = datetime.now()
-	return datetime(now.year, now.month, now.day, now.hour, now.minute)
-
 @app.template_filter('datetime_deadline')
 def filter_datetime_deadline(dt):
 	return dt.strftime('%a %d/%m/%Y %H:%M')
@@ -80,7 +76,7 @@ def lineup():
 		players = get_lineup(current_user.get_name())
 	deadline = current_gameweek()['deadline']
 	return render_template('lineup.html', players=players, activepage="lineup", current_user=current_user,
-										  next_opponents=next_opponents(), deadline=deadline, servertime=server_time())
+										  next_opponents=next_opponents(), deadline=deadline)
 
 @app.route('/lineup/submit', methods=['POST'])
 def lineup_submit():
