@@ -38,7 +38,7 @@ def valid_formation(players):
 def pagination(current_page, pages):
 	after = min(pages - current_page, 2) + 1
 	before = 5 - after
-	pageset = range(max(current_page - before, 1), max(current_page + after, 6))
+	pageset = range(max(current_page - before, 1), max(current_page + after, pages))
 
 	return dict(pages=pageset,
 				pagecount=pages,
