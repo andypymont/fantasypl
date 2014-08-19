@@ -83,6 +83,6 @@ def change_password():
 			flash('Password not changed: Please use a password at least 8 characters long.')
 		else:
 			current_user.change_password(new_password)
-			return redirect(url_for('/'))
+			return redirect(url_for('standings'))
 
 	return render_template('changepassword.html')
