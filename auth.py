@@ -68,7 +68,7 @@ def login():
 @login_required
 def logout():
 	logout_user()
-	return redirect('/')
+	return redirect(url_for('standings'))
 
 @app.route('/change-password/', methods=["GET", "POST"])
 @login_required
