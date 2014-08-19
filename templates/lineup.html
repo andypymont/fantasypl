@@ -6,8 +6,11 @@
         <div class="container col-md-12">
           <button typ="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button>
           <div class="col-md-2"></div>
-          <div class="col-md-3 formation text-right">Current Formation: 1-5-3-2</div>
-          <div class="col-md-1"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
+          <div class="col-md-10">
+            <div class="col-md-3 formation text-right">Current Formation: 1-5-3-2</div>
+            <div class="col-md-1"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
+            <div class="col-md-4">Lineup deadline: {{ deadline|datetime_deadline }}</div>
+          </div>
         </div>
 
         <hr class="col-md-12">
@@ -53,4 +56,9 @@
 
       </form>
     </div>
+
+    <script>
+    var TIME_DEADLINE = "{{ deadline.isoformat() }}"
+    var TIME_SERVER = "{{ servertime.isoformat() }}"
+    </script>
 {% endblock %}
