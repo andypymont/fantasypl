@@ -9,6 +9,7 @@ from app import app, db
 from auth import current_user, login_manager, login_required
 from flask import abort, flash, redirect, render_template, request, url_for
 from math import ceil
+from unidecode import unidecode
 
 def get_lineup(team):
 	return sorted(db.get('players', {'team': team}),
@@ -83,7 +84,7 @@ def lineup_submit():
 
 @app.route('/players/')
 def players():
-	query = request.args.get('q', '')
+	query = unidecode(request.args.get('q', '').lower())
 	def search(playername):
 		return (query == '') or (query in playername)
 
