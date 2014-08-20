@@ -25,6 +25,12 @@ def current_gameweek():
 	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
 	return rv
 
+def next_gameweek():
+	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[1]
+	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')
+	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
+	return rv	
+
 def formation(players):
 	rv = dict()
 	for player in players:
@@ -56,6 +62,16 @@ def pagination(current_page, pages):
 				current=current_page,
 				prev=(current_page > 1),
 				next=(current_page < pages))
+
+def waiver_status(player, current_week, current_deadline, next_deadline):
+	waived = player.get('waived', 0)
+
+	if waived == current_week:
+		return 'Waivers (%s)' % next_deadline.strftime('%d %b')
+	elif datetime.now() < current_deadline:
+		return 'Waivers (%s)' % current_deadline.strftime('%d %b')
+	else:
+		return 'Free Agent'
 
 @app.template_filter('datetime_deadline')
 def filter_datetime_deadline(dt):
@@ -117,6 +133,12 @@ def players():
 	pagin = pagination(page, pages)
 
 	players = players[((page - 1) * 10):(page * 10)]
+
+	gw_now = current_gameweek()
+
+	for player in players:
+		if player['team'] == '':
+			player['team'] = waiver_status(player, gw_now['week'], gw_now['deadline'], next_gameweek()['deadline'])
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query)
 
