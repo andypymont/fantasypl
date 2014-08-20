@@ -18,19 +18,19 @@
 	<div class="col-md-12">
 		<table class="table col-md-12" id="waiverclaims">
 			<tr class="waiverclaimheadings">
-				<th class="hidden">#</th>
+				<th class="col-md-1">#</th>
 				<th class="col-md-4" colspan="2">Add Player</th>
 				<th class="col-md-4" colspan="2">Drop Player</th>
-				<th class="col-md-4">Modify</th>
+				<th class="col-md-3">Modify</th>
 			</tr>
 			{% for claim in current_claims %}
 			<tr id="waiverclaim{{ loop.index }}">
-				<td class="claimno hidden">{{ loop.index }}</td>
+				<td class="claimno col-md-1">{{ loop.index }}</td>
 				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.add.position }}">{{ claim.add.position }}</button></td>
 				<td class="col-md-3">{{ claim.add.name }}</td>
 				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
 				<td class="col-md-3">{{ claim.drop.name }}</td>
-				<td class="col-md-4">
+				<td class="col-md-3">
 					<button class="btn btn-sm btn-default" onclick="moveUp({{ loop.index }})"><span class="glyphicon glyphicon-arrow-up"></span></button>&nbsp;
 					<button class="btn btn-sm btn-default" onclick="moveDown({{ loop.index }})"><span class="glyphicon glyphicon-arrow-down"></span></button>
 				</td>

@@ -161,10 +161,6 @@ def update_waiver_order():
 		for (n, claim) in enumerate(current_claims):
 			claim['priority'] = priorities.index(n + 1)
 
-		from pprint import pprint
-		pprint(priorities)
-		pprint(current_claims)
-
 		current_user.update_claims(other_claims + current_claims)
 
 	return redirect(url_for('waiver_claims'))
