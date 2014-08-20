@@ -47,7 +47,7 @@ class User(object):
 
 		claim = dict(week=week, add=add, drop=drop, status=status, priority=priority)
 		if not (claim in self.dbuser['claims']):
-			self.dbuser['claims'].append()
+			self.dbuser['claims'].append(claim)
 
 		db.save(self.dbuser)
 
