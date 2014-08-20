@@ -71,6 +71,17 @@ function prettyDate(dt) {
 		   + pad(dt.getHours(), 2) + ":" + pad(dt.getMinutes(), 2);
 }
 
+function addPlayerModal(playername, playerid, waiver) {
+	$('#addPlayerName').text(playername);
+	if ( waiver ) {
+		$('#addPlayerWaiverNotice').removeClass("out").addClass("in");
+	}
+	else {
+		$('#addPlayerWaiverNotice').removeClass("in").addClass("out");
+	}
+	$('#addPlayerModal').modal('show');
+}
+
 $(document).ready(function() {
 
 	$('.startercheck').change(checkboxToggle);
@@ -81,5 +92,4 @@ $(document).ready(function() {
 
 	var deadline = new Date(TIME_DEADLINE);
 	$('.deadline').text("Lineup deadline: ".concat(prettyDate(deadline)));
-
 });

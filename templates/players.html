@@ -13,7 +13,7 @@
 			<td><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
 			<td>{{ player.name }}</td>
 			<td>{{ player.club }}</td>
-			<td>{{ player.team }}</td>
+			<td>{{ player.team }}{% if current_user.is_authenticated() and ('Waiver' in player.team or 'Free Agent' in player.team) %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal('{{ player.name }}', {{ player._id }}, {% if 'Waiver' in player.team %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -31,5 +31,28 @@
 		{% if pagination.next %}<li><a href="{{ url_for('players', p=(pagination.current + 1), q=query) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
 	</ul>
 	{% endif %}
+
+	<!-- Modal for adding players -->
+	<div class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="addPlayerModalLabel">Add player</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div>
+		        <p>Select a player to drop from your team for <span id="addPlayerName">this player</span>.</p>
+		        <p id="addPlayerWaiverNotice" class="collapse out">This transaction will be added to your list of waiver claims. These are executed giving priority to teams lower in the league.</p>
+	        </div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        <button type="button" class="btn btn-primary">Submit</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 </div>
 {% endblock %}
