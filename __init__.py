@@ -131,11 +131,13 @@ def waiver_claims():
 	if cgw['waiver'] < datetime.now():
 		# we have passed the waiver deadline
 		current_claims = []
-		prev_claims = [claim for claim in claims if claim['week'] == cgw['week']]
+		prev_claims = sorted([claim for claim in claims if claim['week'] == cgw['week']],
+							 key=lambda claim: claim['priority'])
 	else:
 		current_claims = sorted([claim for claim in claims if claim['week'] == cgw['week']],
 								key=lambda claim: claim['priority'])
-		prev_claims = [claim for claim in claims if claim['week'] == (cgw['week'] - 1)]
+		prev_claims = sorted([claim for claim in claims if claim['week'] == (cgw['week'] - 1)],
+							 key=lambda claim: claim['priority'])
 
 	return render_template('waivers.html', activepage='waivers', current_claims=current_claims, prev_claims=prev_claims,
 										   current_claim_count=len(current_claims), waiver_deadline=cgw['waiver'])

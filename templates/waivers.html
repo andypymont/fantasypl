@@ -57,22 +57,16 @@
 				<th class="col-md-4" colspan="2">Drop Player</th>
 				<th class="col-md-3" colspan="2">Outcome</th>
 			</tr>
+			{% for claim in prev_claims %}
 			<tr>
-				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-M">M</button></td>
-				<td class="col-md-3">Jack Colback</td>
-				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-D">D</button></td>
-				<td class="col-md-3">Rafael</td>
-				<td class="col-md-1"><span class="label label-success">Success</span></td>
-				<td class="col-md-2"></td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.add.position }}">{{ claim.add.position }}</button></td>
+				<td class="col-md-3">{{ claim.add.name }}</td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
+				<td class="col-md-3">{{ claim.drop.name }}</td>
+				<td class="col-md-1"><span class="label label-{{ claim.status }}">{{ claim.status }}</span>
+				<td class="col-md-2">{{ claim.whynot }}</td>
 			</tr>
-			<tr>
-				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-M">M</button></td>
-				<td class="col-md-3">Jack Colback</td>
-				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-D">D</button></td>
-				<td class="col-md-3">Rafael</td>
-				<td class="col-md-1"><span class="label label-danger">Failed</span></td>
-				<td class="col-md-2">Player already taken</td>
-			</tr>
+			{% endfor %}
 		</table>
 	</div>
 </div>
