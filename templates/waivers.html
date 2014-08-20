@@ -8,7 +8,8 @@
 
 	<div class="col-md-12">
 		<form role="form" method="post" action="{{ url_for('update_waiver_order') }}">
-			<button type="submit" class="btn btn-primary col-md-2">Save</button>
+			<button type="submit" class="btn btn-primary btn-waivers col-md-2 disabled">Save</button>
+			<a href="{{ url_for('waiver_claims') }}"><button type="button" class="btn btn-default btn-waivers col-md-2 disabled">Cancel</button></a>
 			<input class="hidden" id="priorities" name="priorities"></input>
 		</form>
 	</div>

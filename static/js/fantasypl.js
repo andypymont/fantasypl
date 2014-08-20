@@ -103,8 +103,9 @@ function moveUp(row_no) {
 	}
 	// else - already at the top
 
-	// update current ordering:
+	// update current ordering and enable save/cancel buttons:
 	$("#priorities").val(currentOrder());
+	$(".btn-waivers").removeClass("disabled");
 }
 
 function moveDown(row_no) {
@@ -123,13 +124,15 @@ function moveDown(row_no) {
 	}
 	// else - already at the bottom
 
-	// update current ordering:
+	// update current ordering and enable save/cancel buttons:
 	$("#priorities").val(currentOrder());
+	$(".btn-waivers").removeClass("disabled");
 }
 
 function removeRow(row_no) {
 	$("tr#waiverclaimx".replace('x', row_no)).remove();
 	$("#priorities").val(currentOrder());
+	$(".btn-waivers").removeClass("disabled");	
 }
 
 function currentOrder() {
