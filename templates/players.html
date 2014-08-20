@@ -6,14 +6,14 @@
 			<th class="col-md-1">Position</th>
 			<th class="col-md-2">Player</th>
 			<th class="col-md-1">Club</th>
-			<th class="col-md-1">Team</th>
+			<th class="col-md-1">Owner</th>
 		</tr>
 		{% for player in players %}
 		<tr>
 			<td><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
 			<td>{{ player.name }}</td>
 			<td>{{ player.club }}</td>
-			<td>{{ player.team }}{% if current_user.is_authenticated() and ('Waiver' in player.team or 'Free Agent' in player.team) %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal('{{ player.name }}', {{ player._id }}, {% if 'Waiver' in player.team %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
+			<td>{{ player.waiver.text }}{% if current_user.is_authenticated() and player.waiver.addable %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal('{{ player.name }}', {{ player._id }}, {% if player.waiver.type == 'waiver' %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
 		</tr>
 		{% endfor %}
 	</table>

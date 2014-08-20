@@ -8,7 +8,7 @@ import os
 from app import app, db
 from auth import current_user, login_manager, login_required
 from datetime import datetime
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from math import ceil
 from unidecode import unidecode
 
@@ -63,15 +63,19 @@ def pagination(current_page, pages):
 				prev=(current_page > 1),
 				next=(current_page < pages))
 
-def waiver_status(player, current_week, current_deadline, next_deadline):
+def waiver_status(player, current_week, current_lineup_deadline, current_waiver_deadline, next_waiver_deadline):
 	waived = player.get('waived', 0)
 
-	if waived == current_week:
-		return 'Waivers (%s)' % next_deadline.strftime('%d %b')
-	elif datetime.now() < current_deadline:
-		return 'Waivers (%s)' % current_deadline.strftime('%d %b')
+	if player['team'] != '':
+		return dict(text=player['team'], addable=False, type='owned')
+	elif waived == current_week:
+		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
+	elif datetime.now() > current_lineup_deadline:
+		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
+	elif datetime.now() < current_waiver_deadline:
+		return dict(text='Waivers (%s)' % current_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	else:
-		return 'Free Agent'
+		return dict(text='Free Agent', addable=True, type='free')
 
 @app.template_filter('datetime_deadline')
 def filter_datetime_deadline(dt):
@@ -137,14 +141,23 @@ def players():
 	gw_now = current_gameweek()
 
 	for player in players:
-		if player['team'] == '':
-			player['team'] = waiver_status(player, gw_now['week'], gw_now['deadline'], next_gameweek()['deadline'])
+		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query)
 
 @app.route('/players/search/', methods=['POST'])
 def search_players():
 	return redirect(url_for('players', q=request.form.get('search', '')))
+
+@app.route('/json/players/<teamid>/')
+def json_team_players(teamid):
+	query = request.args.get('q', '')
+	team = db.get_by_id(teamid)
+
+	players = sorted(db.get('players', {'team': team['name'], 'searchname': lambda sn: (query in sn)}),
+					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+
+	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
 
 if __name__ == '__main__':
 	app.run()
