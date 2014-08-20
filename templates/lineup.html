@@ -4,8 +4,9 @@
       <form role="form" method="post" action="{{ url_for('lineup_submit') }}">
 
         <div class="container col-md-12">
-          <button typ="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button>
-          <div class="col-md-2"></div>
+          <div class="col-md-12"><button type="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button></div>
+          <span class="col-md-12">&nbsp;</span>
+          <!--<div class="col-md-2"></div>-->
           <div class="col-md-10">
             <div class="col-md-3 col-xs-10 formation text-right">Current Formation: 1-5-3-2</div>
             <div class="col-md-1 col-xs-2"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
@@ -25,7 +26,7 @@
             </tr>
             {% for player in players %}
             <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
-              <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" name="startercheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td><input type="checkbox" class="startercheck" id="startercheck{{ player._id }}" name="startercheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>
@@ -44,7 +45,7 @@
             </tr>
             {% for player in players %}
             <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
-              <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}" name="subcheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon-{{ player.position }}">{{ player.position }}</button></td>
+              <td><input type="checkbox" class="subcheck" id="subcheck{{ player._id }}" name="subcheck{{ player._id }}"{% if player.startingxi == '1' %} checked="true"{% endif %}> <button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>
