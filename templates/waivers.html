@@ -32,7 +32,7 @@
 				<td class="col-md-3">{{ claim.drop.name }}</td>
 				<td class="col-md-3">
 					<button class="btn btn-sm btn-default" onclick="moveUp({{ loop.index }})"><span class="glyphicon glyphicon-arrow-up"></span></button>&nbsp;
-					<button class="btn btn-sm btn-default" onclick="moveDown({{ loop.index }})"><span class="glyphicon glyphicon-arrow-down"></span></button>
+					<button class="btn btn-sm btn-default" onclick="moveDown({{ loop.index }})"><span class="glyphicon glyphicon-arrow-down"></span></button>&nbsp;
 					<a href="{{ url_for('cancel_waiver_claim', n=loop.index) }}"><button class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash"></span></button></a>
 				</td>
 			</tr>
