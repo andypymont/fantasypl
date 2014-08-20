@@ -19,6 +19,8 @@
     <![endif]-->
 
     <!-- custom CSS -->
+    <link href="//cdn.jsdelivr.net/select2/3.4.2/select2.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/select2-bootstrap.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ url_for('static', filename='css/fantasypl.css') }}" rel="stylesheet">
 
   </head>
@@ -80,6 +82,7 @@
 
     <script src="//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdn.jsdelivr.net/select2/3.4.8/select2.min.js"></script>
     <script src="{{ url_for('static', filename='js/fantasypl.js') }}"></script>
   </body>
 </html>

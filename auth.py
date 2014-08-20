@@ -24,6 +24,9 @@ class User(object):
 	def get_id(self):
 		return self.dbuser['userid']
 
+	def get_dbid(self):
+		return self.dbuser['_id']
+
 	def get_name(self):
 		return self.dbuser['name']
 

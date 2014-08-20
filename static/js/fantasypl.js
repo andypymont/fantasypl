@@ -87,9 +87,20 @@ $(document).ready(function() {
 	$('.startercheck').change(checkboxToggle);
 	$('.subcheck').change(checkboxToggle);
 
-	var formation = getTeamFormation();
-	$('.formation').text("Current Formation: ".concat(formation));
+	$('.player-dropdown').select2({
+		placeholder: "Select a player",
+		ajax: {
+			url: JSON_TEAM_PLAYERS,
+			data: function(term, page) {
+				return { q: term };
+			},
+			results: function(data, page) {
+				return {results: data.players};
+			}
+		}
+	});
 
-	var deadline = new Date(TIME_DEADLINE);
-	$('.deadline').text("Lineup deadline: ".concat(prettyDate(deadline)));
+	$('.formation').text("Current Formation: ".concat(getTeamFormation()));
+	$('.deadline').text("Lineup deadline: ".concat(prettyDate(new Date(TIME_DEADLINE))));
+
 });
