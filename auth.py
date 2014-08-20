@@ -46,7 +46,9 @@ class User(object):
 			priority = 1
 
 		claim = dict(week=week, add=add, drop=drop, status=status, priority=priority)
-		if not (claim in self.dbuser['claims']):
+		existing = [(c['week'], c['add']['_id'], c['drop']['_id']) for c in self.dbuser['claims']]
+
+		if not ((claim['week'], claim['add']['_id'], claim['drop']['_id']) in existing):
 			self.dbuser['claims'].append(claim)
 
 		db.save(self.dbuser)
