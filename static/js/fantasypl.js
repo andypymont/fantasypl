@@ -22,6 +22,21 @@ function validFormation(formation) {
 	return (validFormations.indexOf(formation) > -1);
 }
 
+function updateFormationValidity() {
+	/* update current formation text and good/bad indicator */
+	var formation = getTeamFormation();
+	$('.formation').text("Current Formation: ".concat(formation));
+	if (validFormation(formation)) {
+		$('#formationvalid').removeClass("out").addClass("in");
+		$('#formationinvalid').removeClass("in").addClass("out");
+		$('#btn-savelineup').removeClass("disabled");
+	} else {
+		$('#formationvalid').removeClass("in").addClass("out");
+		$('#formationinvalid').removeClass("out").addClass("in");
+		$('#btn-savelineup').addClass("disabled");
+	}
+}
+
 function checkboxToggle() {
 		/* capture status we are switching to */
 		var inlineup = $(this).is(':checked');
@@ -41,20 +56,8 @@ function checkboxToggle() {
 			$('#'.concat('starterrow').concat(playerno)).removeClass("in").addClass("out");
 			$('#'.concat('subrow').concat(playerno)).removeClass("out").addClass("in");
 		}
-
-		/* update current formation text and good/bad indicator */
-		var formation = getTeamFormation();
-		$('.formation').text("Current Formation: ".concat(formation));
-		if (validFormation(formation)) {
-			$('#formationvalid').removeClass("out").addClass("in");
-			$('#formationinvalid').removeClass("in").addClass("out");
-			$('#btn-savelineup').removeClass("disabled");
-		} else {
-			$('#formationvalid').removeClass("in").addClass("out");
-			$('#formationinvalid').removeClass("out").addClass("in");
-			$('#btn-savelineup').addClass("disabled");
-		}
-
+		/* reflect whether formation is valid in the interface */
+		updateFormationValidity();
 };
 
 function pad(v, size) {
@@ -100,7 +103,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$('.formation').text("Current Formation: ".concat(getTeamFormation()));
 	$('.deadline').text("Lineup deadline: ".concat(prettyDate(new Date(TIME_DEADLINE))));
-
+	updateFormationValidity()
 });
