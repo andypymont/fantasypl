@@ -4,13 +4,13 @@
       <form role="form" method="post" action="{{ url_for('lineup_submit') }}">
 
         <div class="container col-md-12">
-          <div class="col-md-12"><button type="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button></div>
+          <div class="col-md-12 col-sm-12 col-xs-12"><button type="submit" class="btn btn-primary col-md-2" id="btn-savelineup">Save Lineup</button></div>
           <span class="col-md-12">&nbsp;</span>
           <!--<div class="col-md-2"></div>-->
           <div class="col-md-10">
-            <div class="col-md-3 col-xs-10 formation text-right">Current Formation: 1-5-3-2</div>
-            <div class="col-md-1 col-xs-2"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
-            <div class="col-md-4 col-xs-12">Lineup deadline: <span class="deadline">{{ deadline|datetime_deadline }}</span></div>
+            <div class="col-md-3 col-sm-4 col-xs-6 formation">Current Formation: 1-5-3-2</div>
+            <div class="col-md-1 col-sm-2 col-xs-3"><span class="glyphicon glyphicon-ok collapse in" id="formationvalid"></span><span class="warning glyphicon glyphicon-remove collapse out" id="formationinvalid"></span></div>
+            <div class="col-md-4 col-sm-12 col-xs-12">Lineup deadline: <span class="deadline">{{ deadline|datetime_deadline }}</span></div>
           </div>
         </div>
 
