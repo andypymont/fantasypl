@@ -159,35 +159,14 @@ def update_waiver_order():
 	elif priorities:
 		current_claims = sorted([claim for claim in current_user.get_waiver_claims() if claim['week'] == cgw['week']],
 							    key=lambda claim: claim['priority'])
-		other_claims = [claim for claim in current_user.get_waiver_claims() if claim not in current_claims]
-
-		for (n, claim) in enumerate(current_claims):
-			claim['priority'] = priorities.index(n + 1)
-
-		current_user.update_claims(other_claims + current_claims)
-
-	return redirect(url_for('waiver_claims'))
-
-@app.route('/waivers/cancel')
-@login_required
-def cancel_waiver_claim():
-	try:
-		delete = int(request.args.get('n', '0'))
-	except ValueError:
-		delete = 0
-
-	cgw = current_gameweek()
-
-	if datetime.now() >= cgw['waiver']:
-		flash("The deadline for waivers this week has passed. You can no longer edit your claims.")
-	elif delete:
-		current_claims = sorted([claim for claim in current_user.get_waiver_claims() if claim['week'] == cgw['week']],
-							    key=lambda claim: claim['priority'])
 		keep_claims = [claim for claim in current_user.get_waiver_claims() if claim not in current_claims]
 
 		for (n, claim) in enumerate(current_claims):
-			if (n + 1) != delete:
+			try:
+				claim['priority'] = priorities.index(n + 1)
 				keep_claims.append(claim)
+			except ValueError:
+				pass
 
 		current_user.update_claims(keep_claims)
 

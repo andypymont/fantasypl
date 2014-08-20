@@ -127,6 +127,11 @@ function moveDown(row_no) {
 	$("#priorities").val(currentOrder());
 }
 
+function removeRow(row_no) {
+	$("tr#waiverclaimx".replace('x', row_no)).remove();
+	$("#priorities").val(currentOrder());
+}
+
 function currentOrder() {
 	var ids = [];
 	$("#waiverclaims tr td.claimno").each( function() {
@@ -154,5 +159,7 @@ $(document).ready(function() {
 	});
 
 	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
+	$("#priorities").val(currentOrder());
+
 	updateFormationValidity();
 });
