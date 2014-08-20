@@ -43,6 +43,7 @@
           <ul class="nav navbar-nav">
             <li{% if activepage == "standings" %} class="active"{% endif %}><a href="{{ url_for('standings') }}">Standings</a></li>
             <li{% if activepage == "lineup" %} class="active"{% endif %}><a href="{{ url_for('lineup') }}">Lineup</a></li>
+            <li{% if activepage == "waivers" %} class="active"{% endif %}><a href="{{ url_for('waiver_claims') }}">Waivers</a></li>
             <li{% if activepage == 'players' %} class="active"{% endif %}><a href="{{ url_for('players') }}">Players</a></li>
           </ul>
           <form class="navbar-form navbar-left" role="search" action="{{ url_for('players') }}">
@@ -77,6 +78,12 @@
         {% endfor %}
       {% endif %}
     {% endwith %}
+
+    <script type="text/javascript">
+      // some sensible defaults for page-specific values
+      var TIME_DEADLINE = "";
+      var JSON_TEAM_PLAYERS = "";
+    </script>
 
     {% block content %}{% endblock %}
 

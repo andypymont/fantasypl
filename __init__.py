@@ -123,6 +123,52 @@ def lineup_submit():
 
 		return redirect(url_for('lineup'))
 
+@app.route('/waivers/')
+def waiver_claims():
+	cgw = current_gameweek()
+	claims = current_user.get_waiver_claims()
+
+	if cgw['waiver'] < datetime.now():
+		# we have passed the waiver deadline
+		current_claims = []
+		prev_claims = [claim for claim in claims if claim['week'] == cgw['week']]
+	else:
+		current_claims = sorted([claim for claim in claims if claim['week'] == cgw['week']],
+								key=lambda claim: claim['priority'])
+		prev_claims = [claim for claim in claims if claim['week'] == (cgw['week'] - 1)]
+
+	return render_template('waivers.html', activepage='waivers', current_claims=current_claims, prev_claims=prev_claims,
+										   current_claim_count=len(current_claims), waiver_deadline=cgw['waiver'])
+
+@app.route('/waivers/update', methods=['POST'])
+@login_required
+def update_waiver_order():
+	try:
+		priorities = [int(prio) for prio in request.form.get('priorities', '').split(',')]
+	except ValueError:
+		priorities = []
+
+	cgw = current_gameweek()
+
+	if datetime.now() >= cgw['waiver']:
+		flash("The deadline for waivers this week has passed. You can no longer edit your claims.")
+
+	elif priorities:
+		current_claims = sorted([claim for claim in current_user.get_waiver_claims() if claim['week'] == cgw['week']],
+							    key=lambda claim: claim['priority'])
+		other_claims = [claim for claim in current_user.get_waiver_claims() if claim not in current_claims]
+
+		for (n, claim) in enumerate(current_claims):
+			claim['priority'] = priorities.index(n + 1)
+
+		from pprint import pprint
+		pprint(priorities)
+		pprint(current_claims)
+
+		current_user.update_claims(other_claims + current_claims)
+
+	return redirect(url_for('waiver_claims'))
+
 @app.route('/players/')
 def players():
 	query = unidecode(request.args.get('q', '').lower())

@@ -87,6 +87,54 @@ function addPlayerModal(playername, playerid, waiver) {
 	$('#addPlayerModal').modal('show');
 }
 
+function moveUp(row_no) {
+	var row = $("tr#waiverclaimx".replace('x', row_no));
+	var previous = row.prev();
+
+	// check to see if it is a row
+	if (previous.is("tr") && !(previous.hasClass("waiverclaimheadings"))) {
+
+		// move row above previous
+		row.detach();
+		previous.before(row);
+
+		// draw attention
+		row.fadeIn();
+	}
+	// else - already at the top
+
+	// update current ordering:
+	$("#priorities").val(currentOrder());
+}
+
+function moveDown(row_no) {
+	var row = $("tr#waiverclaimx".replace('x', row_no));
+	var nxt = row.next();
+
+	// check to see if it is a row
+	if (nxt.is("tr")) {
+
+		// move row beyond next
+		row.detach();
+		nxt.after(row);
+
+		// draw attention
+		row.fadeIn();
+	}
+	// else - already at the bottom
+
+	// update current ordering:
+	$("#priorities").val(currentOrder());
+}
+
+function currentOrder() {
+	var ids = [];
+	$("#waiverclaims tr td.claimno").each( function() {
+		ids.push($(this).text());
+	});	
+	return ids;
+}
+
 $(document).ready(function() {
 
 	$('.startercheck').change(checkboxToggle);
@@ -106,5 +154,5 @@ $(document).ready(function() {
 	});
 
 	$('.deadline').text("Lineup deadline: ".concat(prettyDate(new Date(TIME_DEADLINE))));
-	updateFormationValidity()
+	updateFormationValidity();
 });

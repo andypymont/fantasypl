@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+	<p><h3>Waiver Claims</h3></p>
+
+	{% if current_claims %}
+	<p>The next waiver deadline is <span class="waiver-deadline">{{ waiver_deadline }}</span>. At that point in time, the system will attempt to make the following changes to your lineup in the order specified:</p>
+
+	<div class="col-md-12">
+		<form role="form" method="post" action="{{ url_for('update_waiver_order') }}">
+			<button type="submit" class="btn btn-primary col-md-2">Save</button>
+			<input class="hidden" id="priorities" name="priorities"></input>
+		</form>
+	</div>
+
+	<hr class="col-md-12">
+
+	<div class="col-md-12">
+		<table class="table col-md-12" id="waiverclaims">
+			<tr class="waiverclaimheadings">
+				<th class="hidden">#</th>
+				<th class="col-md-4" colspan="2">Add Player</th>
+				<th class="col-md-4" colspan="2">Drop Player</th>
+				<th class="col-md-4">Modify</th>
+			</tr>
+			{% for claim in current_claims %}
+			<tr id="waiverclaim{{ loop.index }}">
+				<td class="claimno hidden">{{ loop.index }}</td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.add.position }}">{{ claim.add.position }}</button></td>
+				<td class="col-md-3">{{ claim.add.name }}</td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
+				<td class="col-md-3">{{ claim.drop.name }}</td>
+				<td class="col-md-4">
+					<button class="btn btn-sm btn-default" onclick="moveUp({{ loop.index }})"><span class="glyphicon glyphicon-arrow-up"></span></button>&nbsp;
+					<button class="btn btn-sm btn-default" onclick="moveDown({{ loop.index }})"><span class="glyphicon glyphicon-arrow-down"></span></button>
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	{% else %}
+	<p>You have no active waiver claims.</p>
+	{% endif %}
+</div>
+
+{% if prev_claims %}
+<div class="container">
+
+	<p><h3>Last Week's Claims</h3></p>
+
+	<p>These were your claims last week.</p>
+
+	<div class="col-md-12">
+		<table class="table col-md-12">
+			<tr>
+				<th class="col-md-4" colspan="2">Add Player</th>
+				<th class="col-md-4" colspan="2">Drop Player</th>
+				<th class="col-md-3" colspan="2">Outcome</th>
+			</tr>
+			<tr>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-M">M</button></td>
+				<td class="col-md-3">Jack Colback</td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-D">D</button></td>
+				<td class="col-md-3">Rafael</td>
+				<td class="col-md-1"><span class="label label-success">Success</span></td>
+				<td class="col-md-2"></td>
+			</tr>
+			<tr>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-M">M</button></td>
+				<td class="col-md-3">Jack Colback</td>
+				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-D">D</button></td>
+				<td class="col-md-3">Rafael</td>
+				<td class="col-md-1"><span class="label label-danger">Failed</span></td>
+				<td class="col-md-2">Player already taken</td>
+			</tr>
+		</table>
+	</div>
+</div>
+{% endif %}
+{% endblock %}
