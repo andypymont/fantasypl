@@ -33,15 +33,27 @@ class User(object):
 	def get_auth_token(self):
 		return self.dbuser['token']
 
+	def get_waiver_claims(self):
+		return self.dbuser['claims']
+
+	def add_waiver_claim(self, week, add, drop, status=''):
+		if not ('claims' in self.dbuser.keys()):
+			self.dbuser['claims'] = []
+
+		try:
+			priority = max(claim['priority'] for claim in self.dbuser['claims'] if claim['week'] == week) + 1
+		except ValueError:
+			priority = 1
+
+		self.dbuser['claims'].append(dict(week=week, add=add, drop=drop, status=status, priority=priority))
+		db.save(self.dbuser)
+
 	def check_password(self, password):
 		return check_password_hash(self.dbuser['password'], password)
 
 	def change_password(self, newpassword):
 		self.dbuser['password'] = generate_password_hash(newpassword)
 		db.save(self.dbuser)
-
-	def player_claims(self):
-		return self.dbuser['claims']
 
 @login_manager.user_loader
 def load_user(userid):

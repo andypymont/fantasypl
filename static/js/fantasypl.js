@@ -76,6 +76,8 @@ function prettyDate(dt) {
 
 function addPlayerModal(playername, playerid, waiver) {
 	$('#addPlayerName').text(playername);
+	$('#addPlayer').val(playerid);
+
 	if ( waiver ) {
 		$('#addPlayerWaiverNotice').removeClass("out").addClass("in");
 	}

@@ -145,9 +145,34 @@ def players():
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query)
 
-@app.route('/players/search/', methods=['POST'])
-def search_players():
-	return redirect(url_for('players', q=request.form.get('search', '')))
+@app.route('/players/add', methods=['POST'])
+@login_required
+def add_player():
+	add_id = request.form.get('add', 0)
+	drop_id = request.form.get('drop', 0)
+
+	if (add_id > 0 and drop_id > 0):
+		add = db.get_by_id(add_id)
+		drop = db.get_by_id(drop_id)
+
+		cw = current_gameweek()
+		waiver = waiver_status(add, cw['week'], cw['deadline'], cw['waiver'], next_gameweek()['waiver'])
+
+		if waiver['addable']:
+
+			if waiver['type'] == 'free':
+				add['team'] = current_user.get_name()
+				add['startingxi'] = 0
+				drop['team'] = ''
+				drop['waived'] = cw['week']
+
+				db.save_all((add, drop))
+				current_user.add_waiver_claim(cw['week'], add, drop, 'success')
+
+			elif waiver['type'] == 'waiver':
+				current_user.add_waiver_claim(cw['week'], add, drop)
+
+	return redirect(request.args.get('next', url_for('lineup')))
 
 @app.route('/json/players/<teamid>/')
 def json_team_players(teamid):

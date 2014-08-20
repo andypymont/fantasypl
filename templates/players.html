@@ -36,7 +36,7 @@
 	<div class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
-	    	<form role="form" method="post" action="{{ url_for('players') }}">
+	    	<form role="form" method="post" action="{{ url_for('add_player', next=url_for('players', p=pagination.current, q=query)) }}">
 		      	<div class="modal-header">
 		    		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 		    		<h4 class="modal-title" id="addPlayerModalLabel">Add player</h4>
@@ -44,13 +44,14 @@
 		    	<div class="modal-body">
 			        <p>Select a player to drop from your team for <span id="addPlayerName">this player</span>.</p>
 
-			        <table class="table"><td><input id="dropPlayer" name="drop" class="player-dropdown form-control"></td></table>
+			        <input id="dropPlayer" name="drop" class="player-dropdown form-control"></input>
+			        <input id="addPlayer" name="add" class="form-control collapse out"></input>
 			        
 			        <p id="addPlayerWaiverNotice" class="collapse out">This transaction will be added to your list of waiver claims. These are executed giving priority to teams lower in the league.</p>
 		    	</div>
 		    	<div class="modal-footer">
 			        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-			        <button type="button" class="btn btn-primary">Submit</button>
+			        <button type="submit" class="btn btn-primary">Submit</button>
 		    	</div>
 			</form>
 	    </div>
