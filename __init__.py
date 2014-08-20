@@ -168,6 +168,31 @@ def update_waiver_order():
 
 	return redirect(url_for('waiver_claims'))
 
+@app.route('/waivers/cancel')
+@login_required
+def cancel_waiver_claim():
+	try:
+		delete = int(request.args.get('n', '0'))
+	except ValueError:
+		delete = 0
+
+	cgw = current_gameweek()
+
+	if datetime.now() >= cgw['waiver']:
+		flash("The deadline for waivers this week has passed. You can no longer edit your claims.")
+	elif delete:
+		current_claims = sorted([claim for claim in current_user.get_waiver_claims() if claim['week'] == cgw['week']],
+							    key=lambda claim: claim['priority'])
+		keep_claims = [claim for claim in current_user.get_waiver_claims() if claim not in current_claims]
+
+		for (n, claim) in enumerate(current_claims):
+			if (n + 1) != delete:
+				keep_claims.append(claim)
+
+		current_user.update_claims(keep_claims)
+
+	return redirect(url_for('waiver_claims'))
+
 @app.route('/players/')
 def players():
 	query = unidecode(request.args.get('q', '').lower())
