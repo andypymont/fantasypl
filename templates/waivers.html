@@ -4,7 +4,7 @@
 	<p><h3>Waiver Claims</h3></p>
 
 	{% if current_claims %}
-	<p>The next waiver deadline is <span class="waiver-deadline">{{ waiver_deadline }}</span>. At that point in time, the system will attempt to make the following changes to your lineup in the order specified:</p>
+	<p>The next waiver deadline is <strong class="deadline">{{ waiver_deadline|datetime_deadline }}</strong>. At that point in time, the system will attempt to make the following changes to your lineup in the order specified:</p>
 
 	<div class="col-md-12">
 		<form role="form" method="post" action="{{ url_for('update_waiver_order') }}">
@@ -21,7 +21,7 @@
 				<th class="col-md-1">#</th>
 				<th class="col-md-4" colspan="2">Add Player</th>
 				<th class="col-md-4" colspan="2">Drop Player</th>
-				<th class="col-md-3">Modify</th>
+				<th class="col-md-3">Re-order</th>
 			</tr>
 			{% for claim in current_claims %}
 			<tr id="waiverclaim{{ loop.index }}">
@@ -77,4 +77,8 @@
 	</div>
 </div>
 {% endif %}
+
+<script>
+    var TIME_DEADLINE = "{{ waiver_deadline.isoformat() }}"
+</script>
 {% endblock %}

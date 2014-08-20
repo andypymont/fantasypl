@@ -153,6 +153,6 @@ $(document).ready(function() {
 		}
 	});
 
-	$('.deadline').text("Lineup deadline: ".concat(prettyDate(new Date(TIME_DEADLINE))));
+	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
 	updateFormationValidity();
 });
