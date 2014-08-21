@@ -23,7 +23,7 @@ def new_player(name, position, club):
 				club=club,
 				team='',
 				startingxi=0,
-				searchname=unidecode(unicode(name)))
+				searchname=unidecode(unicode(name.lower())))
 
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
