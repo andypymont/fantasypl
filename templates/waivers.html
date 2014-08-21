@@ -68,7 +68,7 @@
 				<td class="col-md-3">{{ claim.add.name }}</td>
 				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
 				<td class="col-md-3">{{ claim.drop.name }}</td>
-				<td class="col-md-1"><span class="label label-{{ claim.status }}">{{ claim.status }}</span>
+				<td class="col-md-1"><span class="label label-{{ claim.status|status_class }}">{{ claim.status }}</span>
 				<td class="col-md-2">{{ claim.whynot }}</td>
 			</tr>
 			{% endfor %}
