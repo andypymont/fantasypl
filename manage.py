@@ -25,7 +25,7 @@ def newuser(name, username, password, draftorder=0, token=None):
 def process_waivers():
 	cgw = current_gameweek()
 
-	if cgw['waiver'] < datetime.now:		
+	if cgw['waiver'] < datetime.now():		
 
 		teams = get_teams(reverse=True)
 		players = db.get('players')
