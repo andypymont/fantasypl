@@ -70,7 +70,7 @@ function pad(v, size) {
 
 function prettyDate(dt) {
 	var weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-	return weekdays[dt.getDay()] + " " + pad(dt.getDate(), 2) + "/" + pad(dt.getMonth(), 2) + "/" + pad(dt.getFullYear(), 4) + " " 
+	return weekdays[dt.getDay()] + " " + pad(dt.getDate(), 2) + "/" + pad(dt.getMonth() + 1, 2) + "/" + pad(dt.getFullYear(), 4) + " " 
 		   + pad(dt.getHours(), 2) + ":" + pad(dt.getMinutes(), 2);
 }
 
