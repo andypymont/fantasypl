@@ -1,13 +1,29 @@
 from app import app, db
 from auth import generate_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask.ext.script import Manager
 from fantasypl import current_gameweek, get_teams
+from inception import _contains
+from unidecode import unidecode
 
 import random
 import string
 
 manager = Manager(app)
+
+def get_player(name):
+	try:
+		return db.get('players', {'searchname': _contains(unidecode(unicode(name.lower())))})[0]
+	except IndexError:
+		return None
+
+def new_player(name, position, club):
+	return dict(name=name,
+				position=position,
+				club=club,
+				team='',
+				startingxi=0,
+				searchname=unidecode(unicode(name)))
 
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
@@ -20,6 +36,19 @@ def newuser(name, username, password, draftorder=0, token=None):
 	user = dict(userid=username, password=generate_password_hash(password), name=name, token=token,
 				wins=0, draws=0, losses=0, points=0, score=0, draftorder=draftorder)
 	db.save(user, 'users')
+
+@manager.command
+def process_waivers_early():
+	cgw = current_gameweek()
+	minute_ago = datetime.now() - timedelta(minutes=1)
+
+	cgw['deadline'] = cgw['deadline'].isoformat()
+	cgw['waiver'] = datetime(year=minute_ago.year, month=minute_ago.month, day=minute_ago.day, hour=minute_ago.hour,
+							 minute=minute_ago.minute, second=0).isoformat()
+
+	db.save(cgw)
+
+	process_waivers()
 
 @manager.command
 def process_waivers():
@@ -63,7 +92,7 @@ def process_waivers():
 						# process claim
 						if claim['add']['team'] != '':
 							claim['status'] = 'failure'
-							claim['whynot'] = 'player no longer available'
+							claim['whynot'] = 'player added by %s' % claim['add']['team']
 						elif claim['drop']['team'] != team['name']:
 							claim['status'] = 'failure'
 							claim['whynot'] = 'no longer have player to drop'
