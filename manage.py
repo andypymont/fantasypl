@@ -54,7 +54,7 @@ def process_waivers_early():
 def process_waivers():
 	cgw = current_gameweek()
 
-	if cgw['waiver'] < datetime.now():		
+	if cgw['waiver'] < datetime.now() and not cgw.get('waivers_done', False):		
 
 		teams = get_teams(reverse=True)
 		players = db.get('players')
@@ -110,7 +110,10 @@ def process_waivers():
 						break
 
 		# save changes
-		db.save_all(players.values() + teams)
+		cgw = db.get_by_id(cgw['_id'])
+		cgw['waivers_done'] = True
+
+		db.save_all(players.values() + teams + [cgw])
 
 if __name__ == '__main__':
 	manager.run()
