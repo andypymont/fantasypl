@@ -6,7 +6,7 @@ except ImportError:
 import os
 
 from app import app, db
-from auth import current_user, login_manager, login_required
+from auth import current_user, load_user, login_manager, login_required
 from datetime import datetime
 from fantasypl import get_lineup, get_teams, next_opponents, current_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, waiver_status
@@ -35,6 +35,29 @@ def lineup():
 	deadline = current_gameweek()['deadline']
 	return render_template('lineup.html', players=players, activepage="lineup", current_user=current_user,
 										  next_opponents=next_opponents(), deadline=deadline)
+
+@app.route('/teams/<userid>')
+def team(userid):
+	user = load_user(userid)
+
+	if not user:
+		abort(404)
+
+	players = get_lineup(user.get_name())
+
+	cgw = current_gameweek()
+	claims = user.get_waiver_claims()
+
+	if cgw['waiver'] < datetime.now():
+		recent_changes = sorted([claim for claim in claims if (claim['week'] == cgw['week'] and claim['status'] == 'success')],
+								key=lambda claim: claim['priority'])
+
+	else:
+		recent_changes = sorted([claim for claim in claims if (claim['week'] == (cgw['week'] - 1) and claim['status'] == 'success')],
+								key=lambda claim: claim['priority'])
+
+	return render_template('team.html', players=players, activepage='team', user=user, next_opponents=next_opponents(),
+										recent_changes=recent_changes)
 
 @app.route('/lineup/submit', methods=['POST'])
 def lineup_submit():

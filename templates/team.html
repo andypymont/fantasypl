@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+
+      <h3>{{ user.get_name() }}'s Squad</h3>
+
+      <div class="table-responsive col-md-9">
+        <table class="table table-condensed">
+          <tr>
+            <th class="col-md-1">Position</th>
+            <th class="col-md-2">Name</th>
+            <th class="col-md-2">Team</th>
+            <th class="col-md-3">Next Match</th>
+          </tr>
+          {% for player in players %}
+          <tr class="starterrow" id="starterrow{{ player._id }}">
+            <td><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
+            <td>{{ player.name }}</td>
+            <td>{{ player.club }}</td>
+            <td>{{ next_opponents[player.club] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+
+      </div>
+
+    </div>
+
+  <div class="container">
+
+    <p><h3>Recent Transactions</h3></p>
+
+    {% if recent_changes %}
+
+    <div class="col-md-12">
+      <table class="table col-md-8">
+        <tr>
+          <th class="col-md-4" colspan="2">Add Player</th>
+          <th class="col-md-4" colspan="2">Drop Player</th>
+        </tr>
+        {% for claim in recent_changes %}
+        <tr>
+          <td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.add.position }}">{{ claim.add.position }}</button></td>
+          <td class="col-md-3">{{ claim.add.name }}</td>
+          <td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
+          <td class="col-md-3">{{ claim.drop.name }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    {% else %}
+
+    <p>No recent transactions.</p>
+
+    {% endif %}
+
+  </div>
+
+{% endblock %}
