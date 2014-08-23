@@ -13,7 +13,7 @@
 			<td><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
 			<td>{{ player.name }}</td>
 			<td>{{ player.club }}</td>
-			<td>{{ player.waiver.text }}{% if current_user.is_authenticated() and player.waiver.addable %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal("{{ player.name }}", {{ player._id }}, {% if player.waiver.type == 'waiver' %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
+			<td>{{ player.waiver.text }}{% if current_user.is_authenticated() and player.waiver.addable %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal('{{ player.name }}', {{ player._id }}, {% if player.waiver.type == 'waiver' %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
 		</tr>
 		{% endfor %}
 	</table>
