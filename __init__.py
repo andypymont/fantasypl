@@ -22,6 +22,10 @@ def filter_datetime_deadline(dt):
 def filter_status_class(status):
 	return dict(success='success', failure='danger').get(status, 'default')
 
+@app.template_filter('jsescape')
+def filter_jsescapequotes(s):
+    return s.replace("'", "\\u0027")
+
 @app.route('/')
 @app.route('/standings/')
 def standings():

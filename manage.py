@@ -25,6 +25,11 @@ def new_player(name, position, club):
 				startingxi=0,
 				searchname=unidecode(unicode(name.lower())))
 
+def fix_claims(team):
+    for claim in team.get('claims', []):
+        claim['add']['_id'] = get_player(claim['add']['searchname'])['_id']
+        claim['drop']['_id'] = get_player(claim['drop']['searchname'])['_id']
+
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
 	"Create a new user"
@@ -54,7 +59,7 @@ def process_waivers_early():
 def process_waivers():
 	cgw = current_gameweek()
 
-	if cgw['waiver'] < datetime.now() and not cgw.get('waivers_done', False):		
+	if cgw['waiver'] < datetime.now() and not cgw.get('waivers_done', False):
 
 		teams = get_teams(reverse=True)
 		players = db.get('players')
