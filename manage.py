@@ -62,15 +62,6 @@ def update_next_fixtures(fixtures):
 
     db.save_all(clubs.values())
 
-def update_claims():
-	claims = db.get('claims')
-	usernames = dict([(user['userid'], user['name']) for user in db.get('users')])
-
-	for claim in claims:
-		claim['username'] = usernames[claim['user']]
-
-	db.save_all(claims)
-
 @manager.command
 def transfer_old_claims():
 	"Transfer claims from old format (embedded in user object) into new format (their own objects in the database)"
