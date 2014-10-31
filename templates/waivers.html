@@ -48,19 +48,34 @@
 	{% endif %}
 </div>
 
-{% if prev_claims %}
 <div class="container">
 
-	<p><h3>Last Week's Claims</h3></p>
+	<p><h3>Previous Claims</h3></p>
 
-	<p>These were your claims last week.</p>
+	<ul class="pagination col-md-2">
+		<li{% if view == 'own' %} class="active"{% endif %}><span><a href="{{ url_for('waiver_claims', week=week_pagination.current, view='own') }}">Yours</a></span></li>
+		<li{% if view == 'league' %} class="active"{% endif %}><span><a href="{{ url_for('waiver_claims', week=week_pagination.current, view='league') }}">League</a></span></li>
+	</ul>
 
+	<ul class="pagination col-md-10">
+		{% if week_pagination.prev %}<li><a href="{{ url_for('waiver_claims', week=week_pagination.current - 1, view=view) }}">&laquo;</a></li>{% else %}<li class="disabled"><span>&laquo;</span></li>{% endif %}
+		{% for pg in week_pagination.pages %}
+			{% if pg > week_pagination.pagecount %}
+			<li class="disabled"><span>{{ pg }}</span></li>
+			{% else %}
+			<li{% if pg == week_pagination.current %} class="active"{% endif %}><a href="{{ url_for('waiver_claims', week=pg, view=view) }}">{{ pg }}</a></li>
+			{% endif %}
+		{% endfor %}
+		{% if week_pagination.next %}<li><a href="{{ url_for('waiver_claims', week=week_pagination.current + 1, view=view) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
+	</ul>
+
+	{% if prev_claims %}
 	<div class="col-md-12">
 		<table class="table col-md-12">
 			<tr>
 				<th class="col-md-4" colspan="2">Add Player</th>
 				<th class="col-md-4" colspan="2">Drop Player</th>
-				<th class="col-md-3" colspan="2">Outcome</th>
+				<th class="col-md-3" colspan="2">{% if view == 'league' %}Team{% else %}Outcome{% endif %}</th>
 			</tr>
 			{% for claim in prev_claims %}
 			<tr>
@@ -68,14 +83,15 @@
 				<td class="col-md-3">{{ claim.add.name }}</td>
 				<td class="col-md-1"><button class="btn btn-sm btn-default posicon posicon-{{ claim.drop.position }}">{{ claim.drop.position}}</button></td>
 				<td class="col-md-3">{{ claim.drop.name }}</td>
-				<td class="col-md-1"><span class="label label-{{ claim.status|status_class }}">{{ claim.status }}</span>
+				<td class="col-md-1">{% if view == 'league' %}{{ claim.username }}{% else %}<span class="label label-{{ claim.status|status_class }}">{{ claim.status }}</span>{% endif %}
 				<td class="col-md-2">{{ claim.whynot }}</td>
 			</tr>
 			{% endfor %}
 		</table>
 	</div>
+	{% endif %}
+
 </div>
-{% endif %}
 
 <script>
     var TIME_DEADLINE = "{{ waiver_deadline.isoformat() }}"
