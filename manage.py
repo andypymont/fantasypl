@@ -62,6 +62,21 @@ def update_next_fixtures(fixtures):
 
     db.save_all(clubs.values())
 
+def transfer_old_claims():
+	"Transfer claims from old format (embedded in user object) into new format (their own objects in the database)"
+	users = db.get('users')
+	claims = []
+
+	for user in users:
+		if 'claims' in user.keys():
+			for claim in user.get('claims', []):
+				claim['_collection'] = 'claims'
+				claim['user'] = user['userid']
+				claims.append(claim)
+			del user['claims']
+
+	db.save_all(claims + users)
+
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
 	"Create a new user"
@@ -95,6 +110,7 @@ def process_waivers():
 
 		teams = get_teams(reverse=True)
 		players = db.get('players')
+		claims = db.get('claims', dict(week=cgw['week']))
 
 		# mark all players currently on teams
 		for player in players:
@@ -106,8 +122,9 @@ def process_waivers():
 
 		def next_claim(team):
 			try:
-				return sorted([claim for claim in team.get('claims', []) if (claim['week'] == cgw['week'] and claim['status'] == '')],
+				return sorted([claim for claim in claims if claim['user'] == team.get_id() and claim['status'] == ''],
 							  key=lambda claim: claim['priority'])[0]
+
 			except IndexError:
 				return False
 
@@ -150,7 +167,7 @@ def process_waivers():
 		cgw = db.get_by_id(cgw['_id'])
 		cgw['waivers_done'] = True
 
-		db.save_all(players.values() + teams + [cgw])
+		db.save_all(players.values() + teams + claims + [cgw])
 
 if __name__ == '__main__':
 	manager.run()

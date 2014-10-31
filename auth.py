@@ -33,30 +33,6 @@ class User(object):
 	def get_auth_token(self):
 		return self.dbuser['token']
 
-	def get_waiver_claims(self):
-		return self.dbuser.get('claims', [])
-
-	def add_waiver_claim(self, week, add, drop, status=''):
-		if not ('claims' in self.dbuser.keys()):
-			self.dbuser['claims'] = []
-
-		try:
-			priority = max(claim['priority'] for claim in self.dbuser['claims'] if claim['week'] == week) + 1
-		except ValueError:
-			priority = 1
-
-		claim = dict(week=week, add=add, drop=drop, status=status, priority=priority)
-		existing = [(c['week'], c['add']['_id'], c['drop']['_id']) for c in self.dbuser['claims']]
-
-		if not ((claim['week'], claim['add']['_id'], claim['drop']['_id']) in existing):
-			self.dbuser['claims'].append(claim)
-
-		db.save(self.dbuser)
-
-	def update_claims(self, claims):
-		self.dbuser['claims'] = claims
-		db.save(self.dbuser)
-
 	def check_password(self, password):
 		return check_password_hash(self.dbuser['password'], password)
 

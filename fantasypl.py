@@ -60,6 +60,20 @@ def pagination(current_page, pages):
 				prev=(current_page > 1),
 				next=(current_page < pages))
 
+def add_waiver_claim(user, week, add, drop, status=''):
+	claims = db.get('claims', dict(user=user, week=week))
+	existing = [(c['add']['_id'], c['drop']['_id']) for c in claims]
+
+	if not ((add['_id'], drop['_id']) in existing):
+
+		try:
+			priority = max(claim['priority'] for claim in claims) + 1
+		except ValueError:
+			priority = 1
+
+		document = dict(user=user, week=week, priority=priority, add=add, drop=drop, status=status)
+		db.save(document, collection='claims')
+
 def waiver_status(player, current_week, current_lineup_deadline, current_waiver_deadline, next_waiver_deadline):
 	last_on_team = player.get('onteam', 0)
  	
