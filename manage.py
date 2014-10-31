@@ -62,6 +62,7 @@ def update_next_fixtures(fixtures):
 
     db.save_all(clubs.values())
 
+@manager.command
 def transfer_old_claims():
 	"Transfer claims from old format (embedded in user object) into new format (their own objects in the database)"
 	users = db.get('users')
