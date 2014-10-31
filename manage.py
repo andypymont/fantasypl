@@ -62,6 +62,15 @@ def update_next_fixtures(fixtures):
 
     db.save_all(clubs.values())
 
+def update_claims():
+	claims = db.get('claims')
+	usernames = dict([(user['userid'], user['name']) for user in db.get('users')])
+
+	for claim in claims:
+		claim['username'] = usernames[claim['user']]
+
+	db.save_all(claims)
+
 @manager.command
 def transfer_old_claims():
 	"Transfer claims from old format (embedded in user object) into new format (their own objects in the database)"
@@ -73,6 +82,7 @@ def transfer_old_claims():
 			for claim in user.get('claims', []):
 				claim['_collection'] = 'claims'
 				claim['user'] = user['userid']
+				claim['username'] = user['name']
 				claims.append(claim)
 			del user['claims']
 
@@ -131,6 +141,7 @@ def process_waivers():
 
 		# process waiver claims
 		done = 0
+		seq = 0
 		while not done:
 			done = 1 # until we find out otherwise!
 
@@ -157,6 +168,10 @@ def process_waivers():
 							claim['add']['onteam'] = cgw['week']
 							claim['drop']['team'] = ''
 							claim['drop']['startingxi'] = 0
+
+							claim['order'] = seq
+							seq += 1
+
 							# success, exit loop
 							break
 
