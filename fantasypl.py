@@ -16,6 +16,12 @@ def get_teams(reverse=False):
 def next_opponents():
 	return dict([(club['name'], club['nextopponent']) for club in db.get('clubs')])
 
+def last_gameweek():
+	rv = sorted(db.get('gameweeks', {'completed': True}), key=lambda gw: gw['week'])[-1]
+	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')
+	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
+	return rv
+
 def current_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[0]
 	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')

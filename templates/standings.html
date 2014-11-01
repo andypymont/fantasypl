@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
+	<h3>Standings</h3>
+
 	<table class="table table-striped">
 		<tr>
 			<th class="col-md-1">#</th>
@@ -25,5 +27,27 @@
 		</tr>
 		{% endfor %}
 	</table>
+</div>
+
+<div class="container">
+	<h3>Latest Results</h3>
+
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-1"></td>
+			<th class="col-md-2">Home</th>
+			<th class="col-md-1">Result</th>
+			<th class="col-md-2">Away</th>
+		</tr>
+		{% for result in latest_results %}
+		<tr>
+			<td class="col-md-1"></td>
+			<td class="col-md-2">{{ result.home }}</td>
+			<td class="col-md-1">{{ result.homescore }}-{{ result.awayscore }}</td>
+			<td class="col-md-2">{{ result.away }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+
 </div>
 {% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+
+	<h5>Select week:</h5>
+	<ul class="pagination col-md-12">
+		{% if pagination.prev %}<li><a href="{{ url_for('schedule', week=pagination.current-1) }}">&laquo;</a></li>{% else %}<li class="disabled"><span>&laquo;</span></li>{% endif %}
+		{% for pg in pagination.pages %}
+			{% if pg > pagination.pagecount %}
+			<li class="disabled"><span>{{ pg }}</span></li>
+			{% else %}
+			<li{% if pg == pagination.current %} class="active"{% endif %}><a href="{{ url_for('schedule', week=pg) }}">{{ pg }}</a></li>
+			{% endif %}
+		{% endfor %}
+		{% if pagination.next %}<li><a href="{{ url_for('schedule', week=pagination.current+1) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
+	</ul>
+
+</div>
+
+<div class="container">
+
+	<h3>Premier League</h3>
+
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-1">Date</th>
+			<th class="col-md-2">Home</th>
+			<th class="col-md-1">Result</th>
+			<th class="col-md-2">Away</th>
+		</tr>
+		{% for fixture in gameweek.fixtures %}
+		<tr>
+			<td class="col-md-1">{{ fixture.date|fixture_date }}</td>
+			<td class="col-md-2">{{ fixture.home }}</td>
+			<td class="col-md-1">{{ fixture.homescore }}-{{ fixture.awayscore }}</td>
+			<td class="col-md-2">{{ fixture.away }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+
+</div>
+
+<div class="container">
+
+	<h3>Fantasy Premier League</h3>
+
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-1"></td>
+			<th class="col-md-2">Home</th>
+			<th class="col-md-1">Result</th>
+			<th class="col-md-2">Away</th>
+		</tr>
+		{% for fixture in gameweek.schedule %}
+		<tr>
+			<td class="col-md-1"></td>
+			<td class="col-md-2">{{ fixture.home }}</td>
+			<td class="col-md-1">{{ fixture.homescore }}-{{ fixture.awayscore }}</td>
+			<td class="col-md-2">{{ fixture.away }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+
+</div>
+{% endblock %}
