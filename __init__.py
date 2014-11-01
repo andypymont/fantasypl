@@ -8,7 +8,7 @@ import os
 from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from datetime import datetime
-from fantasypl import get_lineup, get_teams, next_opponents, current_gameweek, next_gameweek, formation
+from fantasypl import get_lineup, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from math import ceil
@@ -26,10 +26,25 @@ def filter_status_class(status):
 def filter_jsescapequotes(s):
     return s.replace("'", "\\u0027")
 
+@app.template_filter('fixture_date')
+def filter_fixture_date(fd):
+	return datetime.strptime(fd, '%Y-%m-%dT%H:%M:%S').strftime('%d %b')
+
 @app.route('/')
 @app.route('/standings/')
 def standings():
-	return render_template('standings.html', activepage="standings", current_user=current_user, teams=get_teams())
+	return render_template('standings.html', activepage="standings", current_user=current_user, teams=get_teams(), latest_results=last_gameweek()['schedule'])
+
+@app.route('/schedule/')
+def schedule():
+	gameweeks = db.get('gameweeks')
+	cgw = current_gameweek()
+	gw = int(request.args.get('week', cgw['week']))
+
+	pagin = pagination(gw, len(gameweeks))
+	gameweek = gameweeks[gw - 1]
+
+	return render_template('schedule.html', activepage="schedule", gameweek=gameweek, pagination=pagin)
 
 @app.route('/lineup/')
 @login_required
