@@ -124,7 +124,7 @@ def process_waivers():
 
 		def next_claim(team):
 			try:
-				return sorted([claim for claim in claims if claim['user'] == team.get_id() and claim['status'] == ''],
+				return sorted([claim for claim in claims if claim['user'] == team['userid'] and claim['status'] == ''],
 							  key=lambda claim: claim['priority'])[0]
 
 			except IndexError:
