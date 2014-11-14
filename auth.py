@@ -21,6 +21,9 @@ class User(object):
 	def is_anonymous(self):
 		return True
 
+	def is_scorer(self):
+		return self.dbuser.get('scorer', False)
+
 	def get_id(self):
 		return self.dbuser['userid']
 

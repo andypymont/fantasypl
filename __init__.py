@@ -46,6 +46,53 @@ def schedule():
 
 	return render_template('schedule.html', activepage="schedule", gameweek=gameweek, pagination=pagin)
 
+@app.route('/scoring/')
+@login_required
+def scoring():
+	if not current_user.is_scorer():
+		return redirect(url_for('lineup'))
+	else:
+		gameweeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
+		for gw in gameweeks:
+			gw['deadline'] = datetime.strptime(gw['deadline'], '%Y-%m-%dT%H:%M:%S')
+			gw['conclusion'] = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
+
+		return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
+
+@app.route('/scoring/week/<weekno>/')
+@login_required
+def scoreweek(weekno):
+	if not current_user.is_scorer():
+		return redirect(url_for('lineup'))
+	else:
+		return render_template('scoring.html', activepage="scoring", gameweeks=[])
+
+@app.route('/scoring/week/<weekno>/close/')
+@login_required
+def closeweek(weekno):
+	if not current_user.is_scorer():
+		return redirect(url_for('lineup'))
+	else:
+		gw = db.get('gameweeks', dict(week=int(weekno)))
+		if gw:
+			gw[0]['scored'] = True
+			db.save(gw[0])
+
+		return redirect(url_for('scoring'))
+
+@app.route('/scoring/week/<weekno>/open/')
+@login_required
+def openweek(weekno):
+	if not current_user.is_scorer():
+		return redirect(url_for('lineup'))
+	else:
+		gw = db.get('gameweeks', dict(week=int(weekno)))
+		if gw:
+			gw[0]['scored'] = False
+			db.save(gw[0])
+
+		return redirect(url_for('scoring'))		
+
 @app.route('/lineup/')
 @login_required
 def lineup():
@@ -186,7 +233,7 @@ def players():
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query)
 
-@app.route('/players/add', methods=['POST'])
+@app.route('/players/add/', methods=['POST'])
 @login_required
 def add_player():
 	add_id = request.form.get('add', 0)
