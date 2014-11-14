@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+	<h2>Week {{ gameweek.week}} Scoring: {{ fixture.home.name }} <span id="homescore">{{ fixture.homescore }}</span>&nbsp;&mdash;&nbsp;<span id="awayscore">{{ fixture.awayscore }}</span> {{ fixture.away.name }}</h2>
+</div>
+
+<div class="container">
+	<button class="btn btn-sm btn-primary">Save Changes</button>
+</div>
+
+<div class="container"><form role="form" method="post" action="">
+
+	<div class="col-md-6">
+		<h3>{{ fixture.home.name }} Goals</h3>
+
+		<table class="table table-striped col-md-6">
+			<tr>
+				<th class="col-md-3">Scorer</th>
+				<th class="col-md-3">Assist</th>
+				<th class="col-md-1"><button class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></th>
+			</tr>
+		</table>
+	</div>
+
+	<div class="col-md-6">
+		<h3>{{ fixture.away.name }} Goals</h3>
+
+		<table class="table table-striped col-md-6">
+			<tr>
+				<th class="col-md-3">Scorer</th>
+				<th class="col-md-3">Assist</th>
+				<th class="col-md-1"><button class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button></th>
+			</tr>
+		</table>
+	</div>
+
+</div>
+
+<div class="container">
+
+	<div class="col-md-6">
+
+		<h3>{{ fixture.home.name }} Lineup</h3>
+
+		<table class="table table-striped">
+			<tr>
+				<th class="col-md-3">Player</th>
+				<th class="col-md-1">Start</th>
+				<th class="col-md-1">Finish</th>
+				<th class="col-md-1"></th>
+			</tr>
+			{% for x in range(1, 14) %}
+			<tr>
+				<td class="col-md-3"><input id="homeplayer{{ x }}" name="homeplayer{{ x }}" class="home-player-dropdown form-control"></input></th>
+				<td class="col-md-1"><input id="homestart{{ x }}" name="homestart{{ x }}" type="checkbox" class="form-control"{% if x < 11 %} checked="true"{% endif %}></input></th>
+				<td class="col-md-1"><input id="homefinish{{ x }}" name="homefinish{{ x }}" type="checkbox" class="form-control"{% if x < 11 %} checked="true"{% endif %}></input></th>
+				<td class="col-md-1"></th>
+			</tr>
+			{% endfor %}
+		</table>
+
+	</div>
+
+	<div class="col-md-6">
+
+		<h3>{{ fixture.away.name }} Lineup</h3>
+
+		<table class="table table-striped">
+			<tr>
+				<th class="col-md-3">Player</th>
+				<th class="col-md-1">Start</th>
+				<th class="col-md-1">Finish</th>
+				<th class="col-md-1"></th>
+			</tr>
+			{% for x in range(1, 14) %}
+			<tr>
+				<td class="col-md-3"><input id="awayplayer{{ x }}" name="awayplayer{{ x }}" class="away-player-dropdown form-control"></input></th>
+				<td class="col-md-1"><input id="awaystart{{ x }}" name="awaystart{{ x }}" type="checkbox" class="form-control"{% if x < 11 %} checked="true"{% endif %}></input></th>
+				<td class="col-md-1"><input id="awayfinish{{ x }}" name="awayfinish{{ x }}" type="checkbox" class="form-control"{% if x < 11 %} checked="true"{% endif %}></input></th>
+				<td class="col-md-1"></th>
+			</tr>
+			{% endfor %}
+		</table>
+
+	</div>
+
+</form></div>
+
+<script type="text/javascript">
+	var JSON_HOME_PLAYERS = "{{ url_for('json_club_players', clubid=fixture.home._id) }}";
+	var JSON_AWAY_PLAYERS = "{{ url_for('json_club_players', clubid=fixture.away._id) }}";
+</script>
+{% endblock %}

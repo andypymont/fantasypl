@@ -161,6 +161,32 @@ $(document).ready(function() {
 		}
 	});
 
+	$('.home-player-dropdown').select2({
+		placeholder: "Select a player",
+		ajax: {
+			url: JSON_HOME_PLAYERS,
+			data: function(term, page) {
+				return { q: term };
+			},
+			results: function(data, page) {
+				return {results: data.players};
+			}
+		}
+	});
+
+	$('.away-player-dropdown').select2({
+		placeholder: "Select a player",
+		ajax: {
+			url: JSON_AWAY_PLAYERS,
+			data: function(term, page) {
+				return { q: term };
+			},
+			results: function(data, page) {
+				return {results: data.players};
+			}
+		}
+	});
+
 	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
 	$("#priorities").val(currentOrder());
 

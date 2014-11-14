@@ -31,9 +31,9 @@
 		{% for fixture in gameweek.fixtures %}
 		<tr>
 			<td class="col-md-1">{{ fixture.date|fixture_date }}</td>
-			<td class="col-md-2">{{ fixture.home }}</td>
+			<td class="col-md-2">{{ fixture.home.name }}</td>
 			<td class="col-md-1">{{ fixture.homescore }}-{{ fixture.awayscore }}</td>
-			<td class="col-md-2">{{ fixture.away }}</td>
+			<td class="col-md-2">{{ fixture.away.name }}</td>
 		</tr>
 		{% endfor %}
 	</table>

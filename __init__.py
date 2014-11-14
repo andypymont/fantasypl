@@ -67,33 +67,67 @@ def scoring():
 
 	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
 
-@app.route('/scoring/week/<weekno>/')
+@app.route('/scoring/week/<int:weekno>/')
 @login_required
 @scorer_only
 def scoreweek(weekno):
-	return render_template('scoring.html', activepage="scoring", gameweeks=[])
+	gw = db.get('gameweeks', dict(week=weekno))
 
-@app.route('/scoring/week/<weekno>/close/')
+	if len(gw) == 0:
+		flash("Gameweek %s not found" % weekno)
+		return redirect(url_for('scoring'))
+	else:
+		gw = gw[0]
+		if gw['scored']:
+			flash("Scoring for gameweek %s is not open. Please re-open scoring for this week first." % weekno)
+			return redirect(url_for('scoring'))
+		else:
+			return render_template('scoreweek.html', activepage="scoring", gameweek=gw)
+
+@app.route('/scoring/week/<int:weekno>/close/')
 @login_required
 @scorer_only
 def closeweek(weekno):
-	gw = db.get('gameweeks', dict(week=int(weekno)))
+	gw = db.get('gameweeks', dict(week=weekno))
 	if gw:
 		gw[0]['scored'] = True
 		db.save(gw[0])
 
 	return redirect(url_for('scoring'))
 
-@app.route('/scoring/week/<weekno>/open/')
+@app.route('/scoring/week/<int:weekno>/open/')
 @login_required
 @scorer_only
 def openweek(weekno):
-	gw = db.get('gameweeks', dict(week=int(weekno)))
+	gw = db.get('gameweeks', dict(week=weekno))
 	if gw:
 		gw[0]['scored'] = False
 		db.save(gw[0])
 
 	return redirect(url_for('scoring'))		
+
+@app.route('/scoring/week/<int:weekno>/fixture/<int:fixtureno>')
+@login_required
+@scorer_only
+def scorefixture(weekno, fixtureno):
+	gw = db.get('gameweeks', dict(week=weekno))
+
+	if len(gw) == 0:
+		flash("Gameweek %s not found" % weekno)
+		return redirect(url_for('scoring'))
+	else:
+		gw = gw[0]
+		if gw['scored']:
+			flash("Scoring for gameweek %s is not open. Please re-open scoring for this week first." % weekno)
+			return redirect(url_for('scoring'))
+		else:
+			try:
+				fixture = gw['fixtures'][fixtureno - 1]
+			except IndexError:
+				flash("Fixture %s not found in the week %s." % (fixtureno, weekno))
+				return redirect(url_for('scoring'))
+
+			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture)		
 
 @app.route('/lineup/')
 @login_required
@@ -104,7 +138,7 @@ def lineup():
 	return render_template('lineup.html', players=players, activepage="lineup", current_user=current_user,
 										  next_opponents=next_opponents(), deadline=deadline)
 
-@app.route('/teams/<userid>')
+@app.route('/teams/<userid>/')
 def team(userid):
 	user = load_user(userid)
 
@@ -127,7 +161,7 @@ def team(userid):
 	return render_template('team.html', players=players, activepage='team', user=user, next_opponents=next_opponents(),
 										recent_changes=recent_changes)
 
-@app.route('/lineup/submit', methods=['POST'])
+@app.route('/lineup/submit/', methods=['POST'])
 def lineup_submit():
 	if not current_user:
 		abort(401)
@@ -180,15 +214,13 @@ def waiver_claims():
 										   current_claim_count=len(current_claims), week_pagination=week_pagination(week),
 										   waiver_deadline=cgw['waiver'], view=view)
 
-@app.route('/waivers/update', methods=['POST'])
+@app.route('/waivers/update/', methods=['POST'])
 @login_required
 def update_waiver_order():
 	try:
 		priorities = [int(prio) for prio in request.form.get('priorities', '').split(',')]
 	except ValueError:
 		priorities = []
-
-	print priorities
 
 	cgw = current_gameweek()
 
@@ -263,12 +295,22 @@ def add_player():
 
 	return redirect(request.args.get('next', url_for('lineup')))
 
-@app.route('/json/players/<teamid>/')
+@app.route('/json/players/team/<teamid>/')
 def json_team_players(teamid):
 	query = request.args.get('q', '')
 	team = db.get_by_id(teamid)
 
 	players = sorted(db.get('players', {'team': team['name'], 'searchname': lambda sn: (query in sn)}),
+					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+
+	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
+
+@app.route('/json/players/club/<clubid>/')
+def json_club_players(clubid):
+	query = request.args.get('q', '')
+	club = db.get_by_id(clubid)
+
+	players = sorted(db.get('players', {'club': club['name'], 'searchname': lambda sn: (query in sn)}),
 					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
 
 	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})

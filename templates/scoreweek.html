@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+	<h3>Week {{ gameweek.week}} Scores</h3>
+
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-1">Date</th>
+			<th class="col-md-2">Home</th>
+			<th class="col-md-1">Result</th>
+			<th class="col-md-2">Away</th>
+			<th class="col-md-1"></th>
+		</tr>
+		{% for fixture in gameweek.fixtures %}
+		<tr>
+			<td class="col-md-1">{{ fixture.date|fixture_date }}</td>
+			<td class="col-md-2">{{ fixture.home.name }}</td>
+			<td class="col-md-1">{{ fixture.homescore }}-{{ fixture.awayscore }}</td>
+			<td class="col-md-2">{{ fixture.away.name }}</td>
+			<td class="col-md-1"><a href="{{ url_for('scorefixture', weekno=gameweek.week, fixtureno=loop.index) }}"><button class="btn btn-sm btn-primary">score</button></a></td>
+		</tr>
+		{% endfor %}
+	</table>
+
+</div>
+{% endblock %}
