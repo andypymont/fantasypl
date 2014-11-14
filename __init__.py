@@ -11,6 +11,7 @@ from datetime import datetime
 from fantasypl import get_lineup, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
+from functools import wraps
 from math import ceil
 from unidecode import unidecode
 
@@ -30,6 +31,15 @@ def filter_jsescapequotes(s):
 def filter_fixture_date(fd):
 	return datetime.strptime(fd, '%Y-%m-%dT%H:%M:%S').strftime('%d %b')
 
+def scorer_only(func):
+	@wraps(func)
+	def decorated_function(*args, **kwargs):
+		if current_user.is_scorer():
+			return func(*args, **kwargs)
+		else:
+			return redirect(url_for('lineup'))
+	return decorated_function
+
 @app.route('/')
 @app.route('/standings/')
 def standings():
@@ -48,50 +58,42 @@ def schedule():
 
 @app.route('/scoring/')
 @login_required
+@scorer_only
 def scoring():
-	if not current_user.is_scorer():
-		return redirect(url_for('lineup'))
-	else:
-		gameweeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
-		for gw in gameweeks:
-			gw['deadline'] = datetime.strptime(gw['deadline'], '%Y-%m-%dT%H:%M:%S')
-			gw['conclusion'] = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
+	gameweeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
+	for gw in gameweeks:
+		gw['deadline'] = datetime.strptime(gw['deadline'], '%Y-%m-%dT%H:%M:%S')
+		gw['conclusion'] = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
 
-		return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
+	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
 
 @app.route('/scoring/week/<weekno>/')
 @login_required
+@scorer_only
 def scoreweek(weekno):
-	if not current_user.is_scorer():
-		return redirect(url_for('lineup'))
-	else:
-		return render_template('scoring.html', activepage="scoring", gameweeks=[])
+	return render_template('scoring.html', activepage="scoring", gameweeks=[])
 
 @app.route('/scoring/week/<weekno>/close/')
 @login_required
+@scorer_only
 def closeweek(weekno):
-	if not current_user.is_scorer():
-		return redirect(url_for('lineup'))
-	else:
-		gw = db.get('gameweeks', dict(week=int(weekno)))
-		if gw:
-			gw[0]['scored'] = True
-			db.save(gw[0])
+	gw = db.get('gameweeks', dict(week=int(weekno)))
+	if gw:
+		gw[0]['scored'] = True
+		db.save(gw[0])
 
-		return redirect(url_for('scoring'))
+	return redirect(url_for('scoring'))
 
 @app.route('/scoring/week/<weekno>/open/')
 @login_required
+@scorer_only
 def openweek(weekno):
-	if not current_user.is_scorer():
-		return redirect(url_for('lineup'))
-	else:
-		gw = db.get('gameweeks', dict(week=int(weekno)))
-		if gw:
-			gw[0]['scored'] = False
-			db.save(gw[0])
+	gw = db.get('gameweeks', dict(week=int(weekno)))
+	if gw:
+		gw[0]['scored'] = False
+		db.save(gw[0])
 
-		return redirect(url_for('scoring'))		
+	return redirect(url_for('scoring'))		
 
 @app.route('/lineup/')
 @login_required
