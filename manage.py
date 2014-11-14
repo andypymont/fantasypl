@@ -63,23 +63,6 @@ def update_next_fixtures(fixtures):
     db.save_all(clubs.values())
 
 @manager.command
-def transfer_old_claims():
-	"Transfer claims from old format (embedded in user object) into new format (their own objects in the database)"
-	users = db.get('users')
-	claims = []
-
-	for user in users:
-		if 'claims' in user.keys():
-			for claim in user.get('claims', []):
-				claim['_collection'] = 'claims'
-				claim['user'] = user['userid']
-				claim['username'] = user['name']
-				claims.append(claim)
-			del user['claims']
-
-	db.save_all(claims + users)
-
-@manager.command
 def newuser(name, username, password, draftorder=0, token=None):
 	"Create a new user"
 
@@ -90,6 +73,13 @@ def newuser(name, username, password, draftorder=0, token=None):
 	user = dict(userid=username, password=generate_password_hash(password), name=name, token=token,
 				wins=0, draws=0, losses=0, points=0, score=0, draftorder=draftorder)
 	db.save(user, 'users')
+
+@manager.command
+def complete_gameweeks():
+	for gw in db.get('gameweeks'):
+		conclusion = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
+		if conclusion < datetime.now():
+			db['completed'] = True
 
 @manager.command
 def process_waivers_early():
