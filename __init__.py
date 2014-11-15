@@ -106,7 +106,7 @@ def openweek(weekno):
 
 	return redirect(url_for('scoring'))		
 
-@app.route('/scoring/week/<int:weekno>/fixture/<int:fixtureno>')
+@app.route('/scoring/week/<int:weekno>/fixture/<int:fixtureno>/', methods=['GET', 'POST'])
 @login_required
 @scorer_only
 def scorefixture(weekno, fixtureno):
@@ -127,7 +127,10 @@ def scorefixture(weekno, fixtureno):
 				flash("Fixture %s not found in the week %s." % (fixtureno, weekno))
 				return redirect(url_for('scoring'))
 
-			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture)		
+			if request.method == 'POST':
+				print request.form.getlist('homeplayer')
+
+			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture, weekno=weekno, fixtureno=fixtureno)		
 
 @app.route('/lineup/')
 @login_required

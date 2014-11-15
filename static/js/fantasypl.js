@@ -159,69 +159,59 @@ function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
 	});
 }
 
-function nextGoal(team) {
-	rv = 1;
-	$('.' + team + 'goal').each(function() { rv++; });
-	return rv;
-}
-
-function renumberGoals(team) {
-	n = 1;
-	$("tr." + team + "goal").each(function() {
-		$(this).attr('id', team + 'goal' + n);
-		$(this).children('input[id^=' + team + 'scorer]').attr('id', team + 'scorer' + n).attr('name', team + 'scorer' + n);
-		$(this).children('input[id^=' + team + 'assist]').attr('id', team + 'assist' + n).attr('name', team + 'assist' + n);
-		$(this).find('.btn').unbind('click').click({team: team, n: n}, deleteGoal);
-		n++;
-	});
-}
-
 function deleteGoal(event) {
-	$("#" + event.data.team + "goal" + event.data.n).remove();
-	renumberGoals(event.data.team);
+	$(event.data.row).remove();
 }
 
-function addGoal(team) {
-	n = nextGoal(team);
-
-	newGoal = document.createElement('tr');
-	$(newGoal).attr('id', team + 'goal' + n).addClass(team + 'goal');
-
-	scorerCell = document.createElement('td');
-	scorerDropdown = document.createElement('input');
-	$(scorerDropdown).attr('id', team + 'scorer' + n).attr('name', team + 'scorer' + n).addClass('form-control').appendTo(scorerCell);
-	$(scorerCell).appendTo(newGoal);
-
-	assistCell = document.createElement('td');
-	assistDropdown = document.createElement('input');
-	$(assistDropdown).attr('id', team + 'assist' + n).attr('name', team + 'assist' + n).addClass('form-control').appendTo(assistCell);
-	$(assistCell).appendTo(newGoal);
-
-	deleteCell = document.createElement('td');
-	deleteButton = document.createElement('span');
-	$(deleteButton).html('<span class="glyphicon glyphicon-trash" aria-hidden="true">').addClass("btn").addClass("btn-sm").addClass("btn-default");
-	$(deleteButton).click({team: team, n: n}, deleteGoal);
-	$(deleteButton).appendTo(deleteCell);
-	$(deleteCell).appendTo(newGoal);
-
-	$(newGoal).appendTo($("#" + team + "goals"));
-
+function configureGoalControls(goal, team) {
 	if ( team == 'home' ) {
 		jsonurl = JSON_HOME_PLAYERS;
 	} else {
 		jsonurl = JSON_AWAY_PLAYERS;
 	}
 
-	selectifyNewDropdown(scorerDropdown, "own goal", jsonurl);
-	selectifyNewDropdown(assistDropdown, "no assist", jsonurl);
+	$(goal).find('.scorerdropdown').each(function() { selectifyNewDropdown(this, "own goal", jsonurl); });
+	$(goal).find('.assistdropdown').each(function() { selectifyNewDropdown(this, "no assist", jsonurl); });
+	$(goal).find('.btn').click({row: goal}, deleteGoal);
+}
+
+function addGoal(team) {
+	newGoal = document.createElement('tr');
+	$(newGoal).addClass(team + 'goal');
+
+	scorerCell = document.createElement('td');
+	scorerDropdown = document.createElement('input');
+	$(scorerDropdown).attr('name', team + 'scorer').addClass('form-control scorerdropdown').appendTo(scorerCell);
+	$(scorerCell).appendTo(newGoal);
+
+	assistCell = document.createElement('td');
+	assistDropdown = document.createElement('input');
+	$(assistDropdown).attr('name', team + 'assist').addClass('form-control assistdropdown').appendTo(assistCell);
+	$(assistCell).appendTo(newGoal);
+
+	deleteCell = document.createElement('td');
+	deleteButton = document.createElement('span');
+	$(deleteButton).html('<span class="glyphicon glyphicon-trash" aria-hidden="true">').addClass("btn").addClass("btn-sm").addClass("btn-default");
+	$(deleteButton).appendTo(deleteCell);
+	$(deleteCell).appendTo(newGoal);
+
+	$(newGoal).appendTo($("#" + team + "goals"));
+
+	configureGoalControls(newGoal, team);
 }
 
 $(document).ready(function() {
 
+	// Set up lineup view:
+
 	$('.startercheck').change(checkboxToggle);
 	$('.subcheck').change(checkboxToggle);
-	$('#addhomegoal').click(function() { addGoal("home"); });
-	$('#addawaygoal').click(function() { addGoal("away"); });
+	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
+	$("#priorities").val(currentOrder());
+
+	updateFormationValidity();
+
+	// Set up players view:
 
 	$('.player-dropdown').select2({
 		placeholder: "Select a player",
@@ -235,6 +225,14 @@ $(document).ready(function() {
 			}
 		}
 	});
+
+	// Set up fixture-scoring view:
+
+	$('#addhomegoal').click(function() { addGoal("home"); });
+	$('#addawaygoal').click(function() { addGoal("away"); });
+
+	$('tr.homegoal').each(function() { configureGoalControls(this, 'home'); });
+	$('tr.awaygoal').each(function() { configureGoalControls(this, 'away'); });
 
 	$('.home-player-dropdown').select2({
 		allowClear: true,
@@ -264,8 +262,4 @@ $(document).ready(function() {
 		}
 	});
 
-	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
-	$("#priorities").val(currentOrder());
-
-	updateFormationValidity();
 });
