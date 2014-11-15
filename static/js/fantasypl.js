@@ -145,6 +145,7 @@ function currentOrder() {
 
 function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
 	$(newDropdown).select2({
+		allowClear: true,
 		placeholder: placeholder,
 		ajax: {
 			url: jsonurl,
@@ -164,23 +165,36 @@ function nextGoal(team) {
 	return rv;
 }
 
+function renumberGoals(team) {
+	n = 1;
+	$("tr." + team + "goal").each(function() {
+		$(this).attr('id', team + 'goal' + n);
+		$(this).children('input[id^=' + team + 'scorer]').attr('id', team + 'scorer' + n).attr('name', team + 'scorer' + n);
+		$(this).children('input[id^=' + team + 'assist]').attr('id', team + 'assist' + n).attr('name', team + 'assist' + n);
+		$(this).find('.btn').unbind('click').click({team: team, n: n}, deleteGoal);
+		n++;
+	});
+}
+
 function deleteGoal(event) {
 	$("#" + event.data.team + "goal" + event.data.n).remove();
+	renumberGoals(event.data.team);
 }
 
 function addGoal(team) {
 	n = nextGoal(team);
 
 	newGoal = document.createElement('tr');
+	$(newGoal).attr('id', team + 'goal' + n).addClass(team + 'goal');
 
 	scorerCell = document.createElement('td');
 	scorerDropdown = document.createElement('input');
-	$(scorerDropdown).attr('name', team + 'scorer' + n).addClass('form-control').appendTo(scorerCell);
+	$(scorerDropdown).attr('id', team + 'scorer' + n).attr('name', team + 'scorer' + n).addClass('form-control').appendTo(scorerCell);
 	$(scorerCell).appendTo(newGoal);
 
 	assistCell = document.createElement('td');
 	assistDropdown = document.createElement('input');
-	$(assistDropdown).attr('name', team + 'assist' + n).addClass('form-control').appendTo(assistCell);
+	$(assistDropdown).attr('id', team + 'assist' + n).attr('name', team + 'assist' + n).addClass('form-control').appendTo(assistCell);
 	$(assistCell).appendTo(newGoal);
 
 	deleteCell = document.createElement('td');
@@ -190,7 +204,7 @@ function addGoal(team) {
 	$(deleteButton).appendTo(deleteCell);
 	$(deleteCell).appendTo(newGoal);
 
-	$(newGoal).attr('id', team + 'goal' + n).addClass(team + 'goal').appendTo($("#" + team + "goals"));
+	$(newGoal).appendTo($("#" + team + "goals"));
 
 	if ( team == 'home' ) {
 		jsonurl = JSON_HOME_PLAYERS;
@@ -223,6 +237,7 @@ $(document).ready(function() {
 	});
 
 	$('.home-player-dropdown').select2({
+		allowClear: true,
 		placeholder: "Select a player",
 		ajax: {
 			url: JSON_HOME_PLAYERS,
@@ -236,6 +251,7 @@ $(document).ready(function() {
 	});
 
 	$('.away-player-dropdown').select2({
+		allowClear: true,
 		placeholder: "Select a player",
 		ajax: {
 			url: JSON_AWAY_PLAYERS,
