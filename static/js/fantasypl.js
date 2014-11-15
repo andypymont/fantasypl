@@ -143,10 +143,71 @@ function currentOrder() {
 	return ids;
 }
 
+function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
+	$(newDropdown).select2({
+		placeholder: placeholder,
+		ajax: {
+			url: jsonurl,
+			data: function(term, page) {
+				return { q: term };
+			},
+			results: function(data, page) {
+				return { results: data.players };
+			}
+		}
+	});
+}
+
+function nextGoal(team) {
+	rv = 1;
+	$('.' + team + 'goal').each(function() { rv++; });
+	return rv;
+}
+
+function deleteGoal(event) {
+	$("#" + event.data.team + "goal" + event.data.n).remove();
+}
+
+function addGoal(team) {
+	n = nextGoal(team);
+
+	newGoal = document.createElement('tr');
+
+	scorerCell = document.createElement('td');
+	scorerDropdown = document.createElement('input');
+	$(scorerDropdown).attr('name', team + 'scorer' + n).addClass('form-control').appendTo(scorerCell);
+	$(scorerCell).appendTo(newGoal);
+
+	assistCell = document.createElement('td');
+	assistDropdown = document.createElement('input');
+	$(assistDropdown).attr('name', team + 'assist' + n).addClass('form-control').appendTo(assistCell);
+	$(assistCell).appendTo(newGoal);
+
+	deleteCell = document.createElement('td');
+	deleteButton = document.createElement('span');
+	$(deleteButton).html('<span class="glyphicon glyphicon-trash" aria-hidden="true">').addClass("btn").addClass("btn-sm").addClass("btn-default");
+	$(deleteButton).click({team: team, n: n}, deleteGoal);
+	$(deleteButton).appendTo(deleteCell);
+	$(deleteCell).appendTo(newGoal);
+
+	$(newGoal).attr('id', team + 'goal' + n).addClass(team + 'goal').appendTo($("#" + team + "goals"));
+
+	if ( team == 'home' ) {
+		jsonurl = JSON_HOME_PLAYERS;
+	} else {
+		jsonurl = JSON_AWAY_PLAYERS;
+	}
+
+	selectifyNewDropdown(scorerDropdown, "own goal", jsonurl);
+	selectifyNewDropdown(assistDropdown, "no assist", jsonurl);
+}
+
 $(document).ready(function() {
 
 	$('.startercheck').change(checkboxToggle);
 	$('.subcheck').change(checkboxToggle);
+	$('#addhomegoal').click(function() { addGoal("home"); });
+	$('#addawaygoal').click(function() { addGoal("away"); });
 
 	$('.player-dropdown').select2({
 		placeholder: "Select a player",
