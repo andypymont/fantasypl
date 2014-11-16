@@ -19,6 +19,13 @@
 				<th class="col-md-3">Assist</th>
 				<th class="col-md-1"><span id="addhomegoal" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span></th>
 			</tr>
+			{% for goal in fixture.homegoals %}
+			<tr class="homegoal">
+				<td class="col-md-3"><input name="homescorer" class="form-control scorerdropdown" value="{{ goal.scorer._id }}"></input></td>
+				<td class="col-md-3"><input name="homeassist" class="form-control assistdropdown" value="{{ goal.assist._id }}"></input></td>
+				<td class="col-md-1"><span class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></span></td>
+			</tr>
+			{% endfor %}
 		</table>
 	</div>
 
@@ -31,6 +38,13 @@
 				<th class="col-md-3">Assist</th>
 				<th class="col-md-1"><span id="addawaygoal" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span></button></th>
 			</tr>
+			{% for goal in fixture.awaygoals %}
+			<tr class="awaygoal">
+				<td class="col-md-3"><input name="awayscorer" class="form-control scorerdropdown" value="{{ goal.scorer._id }}"></input></td>
+				<td class="col-md-3"><input name="awayassist" class="form-control assistdropdown" value="{{ goal.assist._id }}"></input></td>
+				<td class="col-md-1"><span class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></span></td>
+			</tr>
+			{% endfor %}
 		</table>
 	</div>
 

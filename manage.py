@@ -82,6 +82,22 @@ def complete_gameweeks():
 			db['completed'] = True
 
 @manager.command
+def record_lineups():
+	cgw = current_gameweek()
+
+	if (cgw['deadline'] < datetime.now()) and (not cgw['conclusion'] < datetime.now()):
+		
+		lineups = db.get('players', dict(startingxi='1'))
+		teams = set(p['team'] for p in lineups)
+		cgw['lineups'] = dict()
+		for team in teams:
+			cgw['lineups'][team] = [player for player in teams]
+
+		cgw['deadline'] = cgw['deadline'].isoformat()
+		cgw['waiver'] = cgw['waiver'].isoformat()
+		db.save(cgw)
+
+@manager.command
 def process_waivers_early():
 	cgw = current_gameweek()
 	minute_ago = datetime.now() - timedelta(minutes=1)

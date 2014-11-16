@@ -106,6 +106,19 @@ def openweek(weekno):
 
 	return redirect(url_for('scoring'))		
 
+def goals_from_scorefixture_form(form, side, players):
+	goals = []
+
+	players = dict([(unicode(player['_id']), player) for player in players])
+
+	scorers = [players.get(scorer) for scorer in form.getlist(side + 'scorer')]
+	assists = [players.get(assist) for assist in form.getlist(side + 'assist')]
+
+	for n, scorer in enumerate(scorers):
+		goals.append(dict(scorer=scorer, assist=assists[n]))
+
+	return goals
+
 def lineup_from_scorefixture_form(form, side, players):
 	lineup = []
 
@@ -148,8 +161,12 @@ def scorefixture(weekno, fixtureno):
 
 			if request.method == 'POST':
 				players = get_fixture_players(fixture)
+				homegoals = goals_from_scorefixture_form(request.form, 'home', players)
+				awaygoals = goals_from_scorefixture_form(request.form, 'away', players)
+
 				fixture.update(homelineup=lineup_from_scorefixture_form(request.form, 'home', players),
-							   awaylineup=lineup_from_scorefixture_form(request.form, 'away', players))
+							   awaylineup=lineup_from_scorefixture_form(request.form, 'away', players),
+							   homegoals=homegoals, homescore=len(homegoals), awaygoals=awaygoals, awayscore=len(awaygoals))
 				db.save(gw)
 
 			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture, weekno=weekno, fixtureno=fixtureno)		
@@ -276,7 +293,7 @@ def players():
 	def search(playername):
 		return (query == '') or (query in playername)
 
-	players = db.get('players', {'searchname': search})
+	players = db.get('players', {'searchname': search, 'club': lambda x: x != ''})
 
 	pages = int(ceil(len(players) / 10.0))
 	page = int(request.args.get('p', 1))

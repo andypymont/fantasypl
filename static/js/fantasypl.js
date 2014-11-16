@@ -163,6 +163,17 @@ function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
 			results: function(data, page) {
 				return { results: data.players };
 			}
+		},
+		initSelection: function(element, callback) {
+			var id = $(element).val();
+			if (id != "") {
+				$.ajax(JSON_PLAYER_BY_ID, {
+					data: {id: id},
+					dataType: "json"
+				}).done(function(data) {
+					callback(data.players[0]);
+				});
+			}
 		}
 	});
 }
