@@ -106,11 +106,11 @@ def do_week_scoring(gw):
 
 	# 0. Helper function / DRY for the home and away sides later
 	players = dict()
-	def scoreplayer(player, goals, cleansheet):
+	def scoreplayer(player, teamgoals, cleansheet):
 		start = 1 * player.get('start', False)
 		finish = 1 * player.get('finish', False)
-		goals = sum([1 for goal in goals if goal['scorer'] and goal['scorer']['_id'] == player['_id']])
-		assists = sum([1 for goal in goals if goal['assist'] and goal['assist']['_id'] == player['_id']])
+		goals = sum([1 for goal in teamgoals if goal['scorer'] and goal['scorer']['_id'] == player['_id']])
+		assists = sum([1 for goal in teamgoals if goal['assist'] and goal['assist']['_id'] == player['_id']])
 		cleansheet = 1 * cleansheet
 		cleansheetpoints = dict(G=3, D=2, M=0, F=0)[player.get('position', 'F')]
 
