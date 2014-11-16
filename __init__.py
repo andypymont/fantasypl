@@ -9,7 +9,7 @@ from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from datetime import datetime
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
-from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status
+from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from functools import wraps
 from math import ceil
@@ -90,8 +90,7 @@ def scoreweek(weekno):
 def closeweek(weekno):
 	gw = db.get('gameweeks', dict(week=weekno))
 	if gw:
-		gw[0]['scored'] = True
-		db.save(gw[0])
+		do_week_scoring(gw[0])
 
 	return redirect(url_for('scoring'))
 
@@ -101,8 +100,7 @@ def closeweek(weekno):
 def openweek(weekno):
 	gw = db.get('gameweeks', dict(week=weekno))
 	if gw:
-		gw[0]['scored'] = False
-		db.save(gw[0])
+		undo_week_scoring(gw[0])
 
 	return redirect(url_for('scoring'))		
 
