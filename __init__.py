@@ -8,7 +8,7 @@ import os
 from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from datetime import datetime
-from fantasypl import get_lineup, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
+from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status
 from flask import abort, flash, jsonify, redirect, render_template, request, url_for
 from functools import wraps
@@ -106,6 +106,25 @@ def openweek(weekno):
 
 	return redirect(url_for('scoring'))		
 
+def lineup_from_scorefixture_form(form, side, players):
+	lineup = []
+
+	players = dict([(unicode(player['_id']), player) for player in players])
+
+	ids = request.form.getlist(side + 'player')
+
+	start = [(form.get('%sstart%s' % (side, x), 'off') == 'on') for x in xrange(1, 15)]
+	finish = [(form.get('%sfinish%s' % (side, x), 'off') == 'on') for x in xrange(1, 15)]
+
+	if ids:
+		for (n, playerid) in enumerate(ids):
+			if playerid != '':
+				player = players[playerid]
+				player.update(start=start[n], finish=finish[n])
+				lineup.append(player)
+
+	return sorted(lineup, key=lambda player: (-int(player['start']), dict(G=1, D=2, M=3, F=4)[player['position']], player['name']))
+
 @app.route('/scoring/week/<int:weekno>/fixture/<int:fixtureno>/', methods=['GET', 'POST'])
 @login_required
 @scorer_only
@@ -128,7 +147,10 @@ def scorefixture(weekno, fixtureno):
 				return redirect(url_for('scoring'))
 
 			if request.method == 'POST':
-				print request.form.getlist('homeplayer')
+				players = get_fixture_players(fixture)
+				fixture.update(homelineup=lineup_from_scorefixture_form(request.form, 'home', players),
+							   awaylineup=lineup_from_scorefixture_form(request.form, 'away', players))
+				db.save(gw)
 
 			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture, weekno=weekno, fixtureno=fixtureno)		
 
@@ -317,6 +339,16 @@ def json_club_players(clubid):
 					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
 
 	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
+
+@app.route('/json/players/')
+def json_player():
+	player = db.get_by_id(request.args.get('id', 0))
+	if player:
+		player = dict(id=player['_id'], text='%s %s' % (player['position'], player['name']))
+	else:
+		player = dict(id='', text='')
+
+	return jsonify(dict(players=[player]))
 
 if __name__ == '__main__':
 	app.run()

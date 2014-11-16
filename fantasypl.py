@@ -5,6 +5,11 @@ def get_lineup(team):
 	return sorted(db.get('players', {'team': team}),
 				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
 
+def get_fixture_players(fixture):
+	clubnames = (fixture['home']['name'], fixture['away']['name'])
+	return sorted(db.get('players', {'club': lambda c: c in clubnames}),
+				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+
 def get_teams(reverse=False):
 	rv = sorted(db.get('users'),
 				key=lambda user: (-user.get('points', 0), -user.get('score', 0), -user.get('tiebreak', 0), user.get('draftorder', 0)))

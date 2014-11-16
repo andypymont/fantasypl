@@ -1,8 +1,8 @@
 function getTeamFormation() {
-		var g = 0;
-		var d = 0;
-		var m = 0;
-		var f = 0;
+	var g = 0;
+	var d = 0;
+	var m = 0;
+	var f = 0;
 
 	$('.starterrow.in').each(function() {
 		$(this).find('.btn').each(function() {
@@ -23,7 +23,7 @@ function validFormation(formation) {
 }
 
 function updateFormationValidity() {
-	/* update current formation text and good/bad indicator */
+	// update current formation text and good/bad indicator
 	var formation = getTeamFormation();
 	$('.formation').text("Current Formation: ".concat(formation));
 	if (validFormation(formation)) {
@@ -38,17 +38,17 @@ function updateFormationValidity() {
 }
 
 function checkboxToggle() {
-		/* capture status we are switching to */
+		// capture status we are switching to 
 		var inlineup = $(this).is(':checked');
 
-		/* calculate ID number */
+		// calculate ID number
 		var playerno = $(this).attr('id').replace('startercheck', '').replace('subcheck', '');
 
-		/* set both checkboxes to the right value */
+		// set both checkboxes to the right value
 		$('#'.concat('startercheck').concat(playerno)).prop('checked', inlineup);
 		$('#'.concat('subcheck').concat(playerno)).prop('checked', inlineup);
 
-		/* collapse in/out the right table rows */
+		// collapse in/out the right table rows
 		if (inlineup) {
 			$('#'.concat('starterrow').concat(playerno)).removeClass("out").addClass("in");
 			$('#'.concat('subrow').concat(playerno)).removeClass("in").addClass("out");
@@ -56,7 +56,7 @@ function checkboxToggle() {
 			$('#'.concat('starterrow').concat(playerno)).removeClass("in").addClass("out");
 			$('#'.concat('subrow').concat(playerno)).removeClass("out").addClass("in");
 		}
-		/* reflect whether formation is valid in the interface */
+		// reflect whether formation is valid in the interface
 		updateFormationValidity();
 };
 
@@ -143,6 +143,14 @@ function currentOrder() {
 	return ids;
 }
 
+function getSelectedPlayers(side) {
+	var vals = [];
+	$('input.' + side + '-player-dropdown').each(function() {
+		vals.push(parseInt($(this).select2("val"), 10));
+	});
+	return vals;
+}
+
 function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
 	$(newDropdown).select2({
 		allowClear: true,
@@ -161,6 +169,18 @@ function selectifyNewDropdown(newDropdown, placeholder, jsonurl) {
 
 function deleteGoal(event) {
 	$(event.data.row).remove();
+	$('span#' + team + 'score').html(countGoals(team));
+}
+
+function updateScore(team) {
+	$('#homescore').html(countGoals('home'));
+	$('#awayscore').html(countGoals('away'));
+}
+
+function countGoals(team) {
+	rv = -1;
+	$('#' + team + 'goals').find('tr').each(function() { rv++; });
+	return rv;
 }
 
 function configureGoalControls(goal, team) {
@@ -176,28 +196,36 @@ function configureGoalControls(goal, team) {
 }
 
 function addGoal(team) {
+	// create a new table-row
 	newGoal = document.createElement('tr');
 	$(newGoal).addClass(team + 'goal');
 
+	// first column: cell containing drop-down for goal scorer
 	scorerCell = document.createElement('td');
 	scorerDropdown = document.createElement('input');
 	$(scorerDropdown).attr('name', team + 'scorer').addClass('form-control scorerdropdown').appendTo(scorerCell);
 	$(scorerCell).appendTo(newGoal);
 
+	// second column: cell containing drop-down for assist
 	assistCell = document.createElement('td');
 	assistDropdown = document.createElement('input');
 	$(assistDropdown).attr('name', team + 'assist').addClass('form-control assistdropdown').appendTo(assistCell);
 	$(assistCell).appendTo(newGoal);
 
+	// third column: cell for button to delete this goal
 	deleteCell = document.createElement('td');
 	deleteButton = document.createElement('span');
 	$(deleteButton).html('<span class="glyphicon glyphicon-trash" aria-hidden="true">').addClass("btn").addClass("btn-sm").addClass("btn-default");
 	$(deleteButton).appendTo(deleteCell);
 	$(deleteCell).appendTo(newGoal);
 
+	// add to the relevant table and trigger function to set up the select2 dropdowns and delete button (not in here to practice DRY with pre-existing
+	// goals from time of page load)
 	$(newGoal).appendTo($("#" + team + "goals"));
-
 	configureGoalControls(newGoal, team);
+
+	// update the score at the top of the page based on the new goal
+	updateScore();
 }
 
 $(document).ready(function() {
@@ -243,7 +271,27 @@ $(document).ready(function() {
 				return { q: term };
 			},
 			results: function(data, page) {
-				return {results: data.players};
+				var results = data.players;
+				var alreadypicked = getSelectedPlayers('home');
+
+				for ( var i=0; i<results.length; i++ ) {
+					if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
+						results[i].disabled = true;
+					};
+				};
+
+				return {results: results};
+			}
+		},
+		initSelection: function(element, callback) {
+			var id = $(element).val();
+			if (id != "") {
+				$.ajax(JSON_PLAYER_BY_ID, {
+					data: {id: id},
+					dataType: "json"
+				}).done(function(data) {
+					callback(data.players[0]);
+				});
 			}
 		}
 	});
@@ -257,7 +305,27 @@ $(document).ready(function() {
 				return { q: term };
 			},
 			results: function(data, page) {
-				return {results: data.players};
+				var results = data.players;
+				var alreadypicked = getSelectedPlayers('away');
+
+				for ( var i=0; i<results.length; i++ ) {
+					if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
+						results[i].disabled = true;
+					};
+				};
+
+				return {results: results};
+			}
+		},
+		initSelection: function(element, callback) {
+			var id = $(element).val();
+			if (id != "") {
+				$.ajax(JSON_PLAYER_BY_ID, {
+					data: {id: id},
+					dataType: "json"
+				}).done(function(data) {
+					callback(data.players[0]);
+				});
 			}
 		}
 	});
