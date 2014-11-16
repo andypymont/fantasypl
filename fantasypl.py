@@ -5,6 +5,11 @@ def get_lineup(team):
 	return sorted(db.get('players', {'team': team}),
 				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
 
+def get_fixture_players(fixture):
+	clubnames = (fixture['home']['name'], fixture['away']['name'])
+	return sorted(db.get('players', {'club': lambda c: c in clubnames}),
+				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+
 def get_teams(reverse=False):
 	rv = sorted(db.get('users'),
 				key=lambda user: (-user.get('points', 0), -user.get('score', 0), -user.get('tiebreak', 0), user.get('draftorder', 0)))
@@ -96,3 +101,53 @@ def waiver_status(player, current_week, current_lineup_deadline, current_waiver_
 		return dict(text='Waivers (%s)' % current_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	else:
 		return dict(text='Free Agent', addable=True, type='free')
+
+def do_week_scoring(gw):
+
+	# 0. Helper function / DRY for the home and away sides later
+	players = dict()
+	def scoreplayer(player, cleansheet):
+		start = 1 * player.get('start', False)
+		finish = 1 * player.get('finish', False)
+		goals = sum([1 for goal in fixture.get('homegoals', []) if goal['scorer'] and goal['scorer']['_id'] == player['_id']])
+		assists = sum([1 for goal in fixture.get('homegoals', []) if goal['assist'] and goal['assist']['_id'] == player['_id']])
+		cleansheet = 1 * cleansheet
+		cleansheetpoints = dict(G=3, D=2, M=0, F=0)[player.get('position', 'F')]
+
+		player.update(score=(start + finish + (3 * goals) + (2 * assists) + (cleansheet * cleansheetpoints)))
+		players[player.get('_id', '')] = player
+
+	# 1. Score the players in the PL fixture (homelineup/awaylineup)
+	for fixture in gw.get('fixtures', []):
+		for player in fixture.get('homelineup', []):
+			scoreplayer(player, len(fixture.get('awaygoals', [])) == 0)
+		for player in fixture.get('awaylineup', []):
+			scoreplayer(player, len(fixture.get('homegoals', [])) == 0)
+
+	# 2. Copy scores to the players in the fantasy gameweek, total each team during the process
+	scores = dict()
+	for (teamname, lineup) in gw.get('lineups', dict()).iteritems():
+		for player in lineup:
+			player.update(players.get(player['_id'], dict()))
+			scores[teamname] = scores.get(teamname, 0) + player.get('score', 0)
+
+	# 3. Update the team score totals in the Fantasy fixtures
+	for fixture in gw['schedule']:
+		fixture['homescore'] = scores.get(fixture['home'], 0)
+		fixture['awayscore'] = scores.get(fixture['away'], 0)
+
+	# 4. Save the gameweek
+	gw.update(scored=True)
+	db.save(gw)
+
+def undo_week_scoring(gw):
+
+	# Clear the scores in the fantasy gameweek
+	for (teamname, lineup) in gw.get('lineups', dict()).iteritems():
+		for player in lineup:
+			player.update(score=0)
+	for fixture in gw['schedule']:
+		fixture['homescore'] = fixture['awayscore'] = 0
+
+	gw.update(scored=False)
+	db.save(gw)

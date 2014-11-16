@@ -12,3 +12,8 @@ button.posicon-D { background-color: hsl(306, 49%, 24%) !important; background-r
     display: none !important;
     visibility: hidden !important;
 }
+
+input[type="checkbox"]{
+  margin: 0;
+  line-height: normal;
+}
