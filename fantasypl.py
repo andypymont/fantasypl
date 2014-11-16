@@ -106,11 +106,11 @@ def do_week_scoring(gw):
 
 	# 0. Helper function / DRY for the home and away sides later
 	players = dict()
-	def scoreplayer(player, cleansheet):
+	def scoreplayer(player, goals, cleansheet):
 		start = 1 * player.get('start', False)
 		finish = 1 * player.get('finish', False)
-		goals = sum([1 for goal in fixture.get('homegoals', []) if goal['scorer'] and goal['scorer']['_id'] == player['_id']])
-		assists = sum([1 for goal in fixture.get('homegoals', []) if goal['assist'] and goal['assist']['_id'] == player['_id']])
+		goals = sum([1 for goal in goals if goal['scorer'] and goal['scorer']['_id'] == player['_id']])
+		assists = sum([1 for goal in goals if goal['assist'] and goal['assist']['_id'] == player['_id']])
 		cleansheet = 1 * cleansheet
 		cleansheetpoints = dict(G=3, D=2, M=0, F=0)[player.get('position', 'F')]
 
@@ -120,9 +120,9 @@ def do_week_scoring(gw):
 	# 1. Score the players in the PL fixture (homelineup/awaylineup)
 	for fixture in gw.get('fixtures', []):
 		for player in fixture.get('homelineup', []):
-			scoreplayer(player, len(fixture.get('awaygoals', [])) == 0)
+			scoreplayer(player, fixture.get('homegoals', []), len(fixture.get('awaygoals', [])) == 0)
 		for player in fixture.get('awaylineup', []):
-			scoreplayer(player, len(fixture.get('homegoals', [])) == 0)
+			scoreplayer(player, fixture.get('awaygoals', []), len(fixture.get('homegoals', [])) == 0)
 
 	# 2. Copy scores to the players in the fantasy gameweek, total each team during the process
 	scores = dict()
