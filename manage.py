@@ -9,6 +9,9 @@ from unidecode import unidecode
 import random
 import string
 
+import filters
+import routes
+
 manager = Manager(app)
 
 def get_player(name):
@@ -79,7 +82,7 @@ def complete_gameweeks():
 	changedweeks = []
 	for gw in db.get('gameweeks'):
 		conclusion = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
-		if (not gw.get('completed', False) and conclusion < datetime.now():
+		if (not gw.get('completed', False)) and conclusion < datetime.now():
 			gw['completed'] = True
 			changedweeks.append(gw)
 	if changedweeks:
