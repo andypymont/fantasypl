@@ -76,10 +76,14 @@ def newuser(name, username, password, draftorder=0, token=None):
 
 @manager.command
 def complete_gameweeks():
+	changedweeks = []
 	for gw in db.get('gameweeks'):
 		conclusion = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
-		if conclusion < datetime.now():
-			db['completed'] = True
+		if (not gw.get('completed', False) and conclusion < datetime.now():
+			gw['completed'] = True
+			changedweeks.append(gw)
+	if changedweeks:
+		db.save_all(changedweeks)
 
 @manager.command
 def record_lineups():
