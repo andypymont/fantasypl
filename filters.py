@@ -11,7 +11,7 @@ def filter_status_class(status):
 
 @app.template_filter('score_class')
 def filter_score_class(score):
-	return {0: 'danger', 1: 'warning', 2: 'default', 3: 'default'}.get(score, 'success')
+	return {0: 'danger', 1: 'warning'}.get(score, 'default')
 
 @app.template_filter('jsescape')
 def filter_jsescapequotes(s):
