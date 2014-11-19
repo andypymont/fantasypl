@@ -28,33 +28,6 @@ def new_player(name, position, club):
 				startingxi=0,
 				searchname=unidecode(unicode(name.lower())))
 
-def add_results(results):
-
-	teams = dict([(t['name'], t) for t in db.get('users')])
-
-	for (home, homes, aways, away) in results:
-		h, a = teams[home], teams[away]
-
-		if homes > aways:
-			# home win
-			h['wins'] += 1
-			a['losses'] += 1
-		elif aways > homes:
-			# away win
-			h['losses'] += 1
-			a['wins'] += 1
-		elif homes == aways:
-			# draw
-			h['draws'] += 1
-			a['draws'] += 1
-
-		h['score'] += homes
-		a['score'] += aways
-		for team in (h, a):
-			team['points'] = (team['wins'] * 2) + team['draws']
-
-	db.save_all(teams.values())
-
 def update_next_fixtures(fixtures):
 
     clubs = dict([(c['name'], c) for c in db.get('clubs')])

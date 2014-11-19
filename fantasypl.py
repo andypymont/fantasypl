@@ -140,6 +140,9 @@ def do_week_scoring(gw):
 	gw.update(scored=True)
 	db.save(gw)
 
+	# 5. Update the league table
+	update_league_table()
+
 def undo_week_scoring(gw):
 
 	# Clear the scores in the fantasy gameweek
@@ -151,3 +154,31 @@ def undo_week_scoring(gw):
 
 	gw.update(scored=False)
 	db.save(gw)
+
+	# Update the league table
+	update_league_table()
+
+def update_league_table():
+	teams = db.get('users')
+
+	results = []
+	for gw in db.get('gameweeks', dict(scored=True)):
+		for result in gw.get('schedule', []):
+			homeresult = dict(team=result.get('home', ''), score=int(result.get('homescore', 0)))
+			awayresult = dict(team=result.get('away', ''), score=int(result.get('awayscore', 0)))
+
+			homeresult['win'] = awayresult['loss'] = 1 * (homeresult.get('score', 0) > awayresult.get('score', 0))
+			awayresult['win'] = homeresult['loss'] = 1 * (awayresult.get('score', 0) > homeresult.get('score', 0))
+			homeresult['draw'] = awayresult['draw'] = 1 * (homeresult.get('score', 0) == awayresult.get('score', 0))
+
+			results.append(homeresult)
+			results.append(awayresult)
+
+	for team in teams:
+		team['wins'] = sum([result.get('win', 0) for result in results if result.get('team', '') == team.get('name', '')])
+		team['losses'] = sum([result.get('loss', 0) for result in results if result.get('team', '') == team.get('name', '')])
+		team['draws'] = sum([result.get('draw', 0) for result in results if result.get('team', '') == team.get('name', '')])
+		team['points'] = (team['wins'] * 2) + team['draws']
+		team['score'] = sum([result.get('score', 0) for result in results if result.get('team', '') == team.get('name', '')])
+
+	db.save_all(teams)
