@@ -21,7 +21,8 @@ def scorer_only(func):
 @app.route('/')
 @app.route('/standings/')
 def standings():
-	return render_template('standings.html', activepage="standings", current_user=current_user, teams=get_teams(), latest_results=last_gameweek()['schedule'])
+	lw = last_gameweek()
+	return render_template('standings.html', activepage="standings", current_user=current_user, teams=get_teams(), latest_results=lw.get('schedule', []), lastweek=lw)
 
 @app.route('/schedule/')
 def schedule():
