@@ -199,7 +199,7 @@ def update_player_scores():
 				if dbplayer:
 					dbplayer.update(totalscore=(dbplayer.get('totalscore', 0) + player.get('score', 0)))
 					try:
-						dbplayer['form'][recent.index(gw['week'])] = player['score']
+						dbplayer['form'][recent.index(gw['week'])] = player.get('score', 0)
 					except ValueError:
 						pass
 
