@@ -28,16 +28,6 @@ def new_player(name, position, club):
 				startingxi=0,
 				searchname=unidecode(unicode(name.lower())))
 
-def update_next_fixtures(fixtures):
-
-    clubs = dict([(c['name'], c) for c in db.get('clubs')])
-
-    for (home, away) in fixtures:
-        clubs[home]['nextopponent'] = '%s (H)' % away
-        clubs[away]['nextopponent'] = '%s (A)' % home
-
-    db.save_all(clubs.values())
-
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
 	"Create a new user"
@@ -60,6 +50,18 @@ def complete_gameweeks():
 			changedweeks.append(gw)
 	if changedweeks:
 		db.save_all(changedweeks)
+		update_next_fixtures()
+
+@manager.command
+def update_next_fixtures():
+	clubs = dict([(c['_id'], c) for c in db.get('clubs')])
+	fixtures = current_gameweek()['fixtures']
+
+	for fixture in fixtures:
+		clubs[fixture['home']['_id']]['nextopponent'] = '%s (H)' % fixture['away']['name']
+		clubs[fixture['away']['_id']]['nextopponent'] = '%s (A)' % fixture['home']['name']
+
+	db.save_all(clubs.values())
 
 @manager.command
 def record_lineups():
