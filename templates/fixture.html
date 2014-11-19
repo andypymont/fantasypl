@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+	<a href="{{ url_for('schedule', week=gameweek.week) }}">&larr; Back to Week 10 Scores</a>
+</div>
+
+<div class="container">
+
+	<div class="col-md-6">
+
+		<h3>{{ fixture.home }}'s Lineup</h3>
+
+		<table class="table table-striped">
+			<tr>
+				<th class="col-md-1"></th>
+				<th class="col-md-4">Player</th>
+				<th class="col-md-1">Score</th>
+			</tr>
+			{% for player in homelineup %}
+			<tr>
+				<td class="col-md-1"><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
+				<td class="col-md-4">{{ player.name }}</td>
+				<td class="col-md-1">{% if player.score %}<span class="label label-{{ player.score|score_class }}">{{ player.score  }}</span>{% else %}<span class="label label-danger">0</span>{% endif %}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td class="col-md-1"></td>
+				<td class="col-md-4"><strong>Total</strong></td>
+				<td class="col-md-1"><strong>{{ fixture.homescore }}</strong></td>
+			</tr>
+		</table>
+
+	</div>
+
+	<div class="col-md-6">
+
+		<h3>{{ fixture.away }}'s Lineup</h3>
+
+		<table class="table table-striped">
+			<tr>
+				<th class="col-md-1"></th>
+				<th class="col-md-4">Player</th>
+				<th class="col-md-1">Score</th>
+			</tr>
+			{% for player in awaylineup %}
+			<tr>
+				<td class="col-md-1"><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
+				<td class="col-md-4">{{ player.name }}</td>
+				<td class="col-md-1">{% if player.score %}<span class="label label-{{ player.score|score_class }}">{{ player.score  }}</span>{% else %}<span class="label label-danger">0</span>{% endif %}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td class="col-md-1"></td>
+				<td class="col-md-4"><strong>Total</strong></td>
+				<td class="col-md-1"><strong>{{ fixture.awayscore }}</strong></td>
+			</tr>
+		</table>
+	</div>
+
+</div>
+{% endblock %}

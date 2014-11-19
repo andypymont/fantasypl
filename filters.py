@@ -9,6 +9,13 @@ def filter_datetime_deadline(dt):
 def filter_status_class(status):
 	return dict(success='success', failure='danger').get(status, 'default')
 
+@app.template_filter('score_class')
+def filter_score_class(score):
+	if score == 0:
+		return 'danger'
+	else:
+		return 'default'
+
 @app.template_filter('jsescape')
 def filter_jsescapequotes(s):
     return s.replace("'", "\\u0027")

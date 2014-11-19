@@ -55,7 +55,7 @@
 		<tr>
 			<td class="col-md-1"></td>
 			<td class="col-md-2">{{ fixture.home }}</td>
-			<td class="col-md-1">{{ fixture.homescore }}-{{ fixture.awayscore }}</td>
+			<td class="col-md-1"><a href="{{ url_for('viewscore', weekno=gameweek.week, fixtureno=loop.index) }}">{{ fixture.homescore }}-{{ fixture.awayscore }}</a></td>
 			<td class="col-md-2">{{ fixture.away }}</td>
 		</tr>
 		{% endfor %}

@@ -34,6 +34,27 @@ def schedule():
 
 	return render_template('schedule.html', activepage="schedule", gameweek=gameweek, pagination=pagin)
 
+@app.route('/score/<int:weekno>/<int:fixtureno>/')
+def viewscore(weekno, fixtureno):
+	gw = db.get('gameweeks', dict(week=weekno))
+
+	if len(gw) == 0:
+		abort(404)
+	else:
+		gw = gw[0]
+		if not gw.get('scored', False):
+			abort(404)
+		else:
+			try:
+				fixture = gw.get('schedule', [])[fixtureno - 1]
+			except IndexError:
+				abort(404)
+
+			homelineup = gw.get('lineups', dict()).get(fixture.get('home', ''), [])
+			awaylineup = gw.get('lineups', dict()).get(fixture.get('away', ''), [])
+
+			return render_template('fixture.html', activepage='schedule', gameweek=gw, fixture=fixture, homelineup=homelineup, awaylineup=awaylineup)
+
 @app.route('/scoring/')
 @login_required
 @scorer_only
@@ -145,7 +166,7 @@ def scorefixture(weekno, fixtureno):
 							   homegoals=homegoals, homescore=len(homegoals), awaygoals=awaygoals, awayscore=len(awaygoals))
 				db.save(gw)
 
-			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture, weekno=weekno, fixtureno=fixtureno)		
+			return render_template('scorefixture.html', activepage="scoring", gameweek=gw, fixture=fixture, weekno=weekno, fixtureno=fixtureno)
 
 @app.route('/lineup/')
 @login_required
