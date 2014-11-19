@@ -16,13 +16,15 @@
 
         <hr class="col-md-12">
 
-        <div class="table-responsive col-md-9">
+        <div class="table-responsive col-md-12">
           <table class="table table-condensed">
             <tr>
               <th class="col-md-1">Position</th>
-              <th class="col-md-2">Name</th>
+              <th class="col-md-3">Name</th>
               <th class="col-md-2">Team</th>
               <th class="col-md-3">Next Match</th>
+              <th class="col-md-2">Form</th>
+              <th class="col-md-1">Season</th>
             </tr>
             {% for player in players %}
             <tr class="starterrow collapse {% if player.startingxi == '1' %}in{% else %}out{% endif %}" id="starterrow{{ player._id }}">
@@ -30,6 +32,8 @@
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>
+              <td>{% for form in player.form %}<span class="label label-{{ form|score_class }}">{{ form }}</span>&nbsp;{% endfor %}</td>
+              <td>{{ player.totalscore }}</td>
             </tr>
             {% endfor %}
           </table>
@@ -39,9 +43,11 @@
           <table class="table table-condensed">
             <tr>
               <th class="col-md-1">Position</th>
-              <th class="col-md-2">Name</th>
+              <th class="col-md-3">Name</th>
               <th class="col-md-2">Team</th>
               <th class="col-md-3">Next Match</th>
+              <th class="col-md-2">Form</th>
+              <th class="col-md-1">Season</th>
             </tr>
             {% for player in players %}
             <tr class="subrow collapse {% if player.startingxi == '1' %}out{% else %}in{% endif %}" id="subrow{{ player._id }}">
@@ -49,6 +55,8 @@
               <td>{{ player.name }}</td>
               <td>{{ player.club }}</td>
               <td>{{ next_opponents[player.club] }}</td>
+              <td>{% for form in player.form %}<span class="label label-{{ form|score_class }}">{{ form }}</span>&nbsp;{% endfor %}</td>
+              <td>{{ player.totalscore }}</td>
             </tr>
             {% endfor %}
           </table>

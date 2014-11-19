@@ -7,6 +7,7 @@ from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
+from fantasypl import decode_iso_datetime, sort_player, sort_player_lineup, sort_player_form, sort_player_score
 from functools import wraps
 
 def scorer_only(func):
@@ -61,8 +62,8 @@ def viewscore(weekno, fixtureno):
 def scoring():
 	gameweeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
 	for gw in gameweeks:
-		gw['deadline'] = datetime.strptime(gw['deadline'], '%Y-%m-%dT%H:%M:%S')
-		gw['conclusion'] = datetime.strptime(gw['conclusion'], '%Y-%m-%dT%H:%M:%S')
+		gw['deadline'] = decode_iso_datetime(gw['deadline'])
+		gw['conclusion'] = decode_iso_datetime(gw['conclusion'])
 
 	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
 
@@ -133,7 +134,7 @@ def lineup_from_scorefixture_form(form, side, players):
 				player.update(start=start[n], finish=finish[n])
 				lineup.append(player)
 
-	return sorted(lineup, key=lambda player: (-int(player['start']), dict(G=1, D=2, M=3, F=4)[player['position']], player['name']))
+	return sorted(lineup, key=sort_player_lineup)
 
 @app.route('/scoring/week/<int:weekno>/fixture/<int:fixtureno>/', methods=['GET', 'POST'])
 @login_required
@@ -286,18 +287,22 @@ def update_waiver_order():
 
 @app.route('/players/')
 def players():
-	query = unidecode(request.args.get('q', '').lower())
+	query = unidecode(unicode(request.args.get('q', '').lower()))
+	sorttype = request.args.get('s', 'score').lower()
 	def search(playername):
 		return (query == '') or (query in playername)
 
-	players = db.get('players', {'searchname': search, 'club': lambda x: x != ''})
+	sort = dict(score=sort_player_score,
+				form=sort_player_form)[sorttype]
 
-	pages = int(ceil(len(players) / 10.0))
+	players = sorted(db.get('players', {'searchname': search, 'club': lambda x: x != ''}), key=sort)
+
+	pages = int(ceil(len(players) / 15.0))
 	page = int(request.args.get('p', 1))
 
 	pagin = pagination(page, pages)
 
-	players = players[((page - 1) * 10):(page * 10)]
+	players = players[((page - 1) * 15):(page * 15)]
 
 	gw_now = current_gameweek()
 
@@ -340,7 +345,7 @@ def json_team_players(teamid):
 	team = db.get_by_id(teamid)
 
 	players = sorted(db.get('players', {'team': team['name'], 'searchname': lambda sn: (query in sn)}),
-					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+					 key=sort_player)
 
 	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
 
@@ -350,7 +355,7 @@ def json_club_players(clubid):
 	club = db.get_by_id(clubid)
 
 	players = sorted(db.get('players', {'club': club['name'], 'searchname': lambda sn: (query in sn)}),
-					 key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+					 key=sort_player)
 
 	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
 

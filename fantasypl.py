@@ -1,14 +1,36 @@
 from app import app, db
 from datetime import datetime
 
+def decode_iso_datetime(iso_datetime):
+	return datetime.strptime(iso_datetime, '%Y-%m-%dT%H:%M:%S')
+
+def sort_player(player):
+	return (dict(G=1, D=2, M=3, F=4)[player['position']],
+			player['name'])
+
+def sort_player_lineup(player):
+	return (-int(player['start']),
+			dict(G=1, D=2, M=3, F=4)[player['position']],
+			player['name'])
+
+def sort_player_form(player):
+	return (-sum([f for f in player['form']]),
+			dict(G=1, D=2, M=3, F=4)[player['position']],
+			player['name'])
+
+def sort_player_score(player):
+	return (-player.get('totalscore', 0),
+			dict(G=1, D=2, M=3, F=4)[player['position']],
+			player['name'])
+
 def get_lineup(team):
 	return sorted(db.get('players', {'team': team}),
-				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+				  key=sort_player)
 
 def get_fixture_players(fixture):
 	clubnames = (fixture['home']['name'], fixture['away']['name'])
 	return sorted(db.get('players', {'club': lambda c: c in clubnames}),
-				  key=lambda player: ({'G': 1, 'D': 2, 'M': 3, 'F': 4}[player['position']], player['name']))
+				  key=sort_player)
 
 def get_teams(reverse=False):
 	rv = sorted(db.get('users'),
@@ -23,20 +45,20 @@ def next_opponents():
 
 def last_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': True}), key=lambda gw: gw['week'])[-1]
-	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')
-	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
+	rv['deadline'] = decode_iso_datetime(rv['deadline'])
+	rv['waiver'] = decode_iso_datetime(rv['waiver'])
 	return rv
 
 def current_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[0]
-	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')
-	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
+	rv['deadline'] = decode_iso_datetime(rv['deadline'])
+	rv['waiver'] = decode_iso_datetime(rv['waiver'])
 	return rv
 
 def next_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[1]
-	rv['deadline'] = datetime.strptime(rv['deadline'], '%Y-%m-%dT%H:%M:%S')
-	rv['waiver'] = datetime.strptime(rv['waiver'], '%Y-%m-%dT%H:%M:%S')
+	rv['deadline'] = decode_iso_datetime(rv['deadline'])
+	rv['waiver'] = decode_iso_datetime(rv['waiver'])
 	return rv	
 
 def formation(players):
@@ -140,8 +162,9 @@ def do_week_scoring(gw):
 	gw.update(scored=True)
 	db.save(gw)
 
-	# 5. Update the league table
+	# 5. Update the league table and player score totals
 	update_league_table()
+	update_player_scores()
 
 def undo_week_scoring(gw):
 
@@ -155,8 +178,32 @@ def undo_week_scoring(gw):
 	gw.update(scored=False)
 	db.save(gw)
 
-	# Update the league table
+	# Update the league table and player score totals
 	update_league_table()
+	update_player_scores()
+
+def update_player_scores():
+	players = dict([(p['_id'], p) for p in db.get('players')])
+
+	gameweeks = db.get('gameweeks', dict(scored=True))
+	recent = sorted(gw['week'] for gw in gameweeks)[-4:]
+
+	for player in players.values():
+		player.pop('totalscore', None)
+		player['form'] = [0] * len(recent)
+
+	for gw in gameweeks:
+		for result in gw.get('fixtures', []):
+			for player in (result.get('homelineup', []) + result.get('awaylineup', [])):
+				dbplayer = players.get(player.get('_id', ''))
+				if dbplayer:
+					dbplayer.update(totalscore=(dbplayer.get('totalscore', 0) + player['score']))
+					try:
+						dbplayer['form'][recent.index(gw['week'])] = player['score']
+					except ValueError:
+						pass
+
+	db.save_all(players.values())
 
 def update_league_table():
 	teams = db.get('users')

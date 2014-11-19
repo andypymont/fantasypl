@@ -7,6 +7,8 @@
 			<th class="col-md-2">Player</th>
 			<th class="col-md-1">Club</th>
 			<th class="col-md-1">Owner</th>
+			<th class="col-md-1">Form <a href="{{ url_for('players', p=pagination.current, q=query, s='form') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
+			<th class="col-md-1">Season <a href="{{ url_for('players', p=pagination.current, q=query, s='score') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
 		</tr>
 		{% for player in players %}
 		<tr>
@@ -14,6 +16,8 @@
 			<td>{{ player.name }}</td>
 			<td>{{ player.club }}</td>
 			<td>{{ player.waiver.text }}{% if current_user.is_authenticated() and player.waiver.addable %}&nbsp;&mdash;&nbsp;<a href="javascript:addPlayerModal('{{ player.name|jsescape }}', {{ player._id }}, {% if player.waiver.type == 'waiver' %}true{% else %}false{% endif %});">Add</a>{% endif %}</td>
+			<td>{% for form in player.form %}<span class="label label-{{ form|score_class }}">{{ form }}</span>&nbsp;{% endfor %}</td>
+			<td>{{ player.totalscore }}</td>
 		</tr>
 		{% endfor %}
 	</table>
