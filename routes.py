@@ -313,7 +313,7 @@ def players():
 	for player in players:
 		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
 
-	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos)
+	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sort=sorttype)
 
 @app.route('/players/add/', methods=['POST'])
 @login_required

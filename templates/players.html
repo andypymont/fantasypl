@@ -3,11 +3,11 @@
 <div class="container">
 
 	<ul class="pagination">
-		<li{% if pos == '' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='') }}">all</a></li>
-		<li{% if pos == 'G' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='G') }}">G</a></li>
-		<li{% if pos == 'D' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='D') }}">D</a></li>
-		<li{% if pos == 'M' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='M') }}">M</a></li>
-		<li{% if pos == 'F' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='F') }}">F</a></li>
+		<li{% if pos == '' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='', s=sorttype) }}">all</a></li>
+		<li{% if pos == 'G' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='G', s=sorttype) }}">G</a></li>
+		<li{% if pos == 'D' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='D', s=sorttype) }}">D</a></li>
+		<li{% if pos == 'M' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='M', s=sorttype) }}">M</a></li>
+		<li{% if pos == 'F' %} class="active"{% endif %}><a href="{{ url_for('players', pg=pagination.current, q=query, p='F', s=sorttype) }}">F</a></li>
 	</ul>
 
 	<table class="table table-striped table-condensed">
@@ -16,8 +16,8 @@
 			<th class="col-md-2">Player</th>
 			<th class="col-md-1">Club</th>
 			<th class="col-md-1">Owner</th>
-			<th class="col-md-1">Form <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='form') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
-			<th class="col-md-1">Season <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='score') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
+			<th class="col-md-1">Form <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='form', s=sorttype) }}"><span class="glyphicon glyphicon-sort"></span></a></th>
+			<th class="col-md-1">Season <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='score', s=sorttype) }}"><span class="glyphicon glyphicon-sort"></span></a></th>
 		</tr>
 		{% for player in players %}
 		<tr>
@@ -33,15 +33,15 @@
 
 	{% if pagination %}
 	<ul class="pagination">
-		{% if pagination.prev %}<li><a href="{{ url_for('players', pg=(pagination.current - 1), q=query, p=pos) }}">&laquo;</a></li>{% else %}<li class="disabled"><span>&laquo;</span></li>{% endif %}
+		{% if pagination.prev %}<li><a href="{{ url_for('players', pg=(pagination.current - 1), q=query, p=pos, s=sorttype) }}">&laquo;</a></li>{% else %}<li class="disabled"><span>&laquo;</span></li>{% endif %}
 		{% for pg in pagination.pages %}
 			{% if pg > pagination.pagecount %}
 			<li class="disabled"><span>{{ pg }}</span></li>
 			{% else %}
-			<li{% if pg == pagination.current %} class="active"{% endif %}><a href="{{ url_for('players', pg=pg, q=query, p=pos) }}">{{ pg }}</a></li>
+			<li{% if pg == pagination.current %} class="active"{% endif %}><a href="{{ url_for('players', pg=pg, q=query, p=pos, s=sorttype) }}">{{ pg }}</a></li>
 			{% endif %}
 		{% endfor %}
-		{% if pagination.next %}<li><a href="{{ url_for('players', pg=(pagination.current + 1), q=query, p=pos) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
+		{% if pagination.next %}<li><a href="{{ url_for('players', pg=(pagination.current + 1), q=query, p=pos, s=sorttype) }}">&raquo;</a></li>{% else %}<li class="disabled"><span>&raquo;</span></li>{% endif %}
 	</ul>
 	{% endif %}
 
@@ -50,7 +50,7 @@
 	<div class="modal fade" id="addPlayerModal" tabindex="-1" role="dialog" aria-labelledby="addPlayerModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
-	    	<form role="form" method="post" action="{{ url_for('add_player', next=url_for('players', pg=pagination.current, q=query, p=pos)) }}">
+	    	<form role="form" method="post" action="{{ url_for('add_player', next=url_for('players', pg=pagination.current, q=query, p=pos, s=sorttype)) }}">
 		      	<div class="modal-header">
 		    		<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
 		    		<h4 class="modal-title" id="addPlayerModalLabel">Add player</h4>
