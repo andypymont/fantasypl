@@ -39,11 +39,11 @@
 			<th class="col-md-1">Result</th>
 			<th class="col-md-2">Away</th>
 		</tr>
-		{% for result in latest_results %}
+		{% for result in lastweek.schedule %}
 		<tr>
 			<td class="col-md-1"></td>
 			<td class="col-md-2">{{ result.home }}</td>
-			<td class="col-md-1"><a href="{{ url_for('viewscore', weekno=lastweek.week, fixtureno=loop.index) }}">{{ result.homescore }}-{{ result.awayscore }}</a></td>
+			<td class="col-md-1">{% if lastweek.scored %}<a href="{{ url_for('viewscore', weekno=lastweek.week, fixtureno=loop.index) }}">{{ result.homescore }}-{{ result.awayscore }}</a>{% endif %}</td>
 			<td class="col-md-2">{{ result.away }}</td>
 		</tr>
 		{% endfor %}
