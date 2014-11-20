@@ -241,18 +241,22 @@ def waiver_claims():
 								key=lambda claim: claim['priority'])
 		week = int(request.args.get('week', cgw['week'] - 1))
 
-	query = dict(week=week)
+	claimquery = dict(week=week)
+	tradequery = dict(week=week)
 	if view == 'league':
-		query.update(status='success')
+		claimquery.update(status='success')
 	else: # view == 'own' or somehow still omitted at this point
-		query.update(user=current_user.get_id())
+		claimquery.update(user=current_user.get_id())
 
-	prev_claims = sorted(db.get('claims', query),
+	prev_claims = sorted(db.get('claims', claimquery),
 						 key=lambda claim: (claim.get('order', 100), claim['priority']))
+	trades = db.get('trades', tradequery)
+	if view != 'league':
+		trades = [trade for trade in trades if current_user.get_id() in (trade['first']['userid'], trade['second']['userid'])]
 
 	return render_template('waivers.html', activepage='waivers', current_claims=current_claims, prev_claims=prev_claims,
-										   current_claim_count=len(current_claims), week_pagination=week_pagination(week),
-										   waiver_deadline=cgw['waiver'], view=view)
+										   trades=trades, current_claim_count=len(current_claims),
+										   week_pagination=week_pagination(week), waiver_deadline=cgw['waiver'], view=view)
 
 @app.route('/waivers/update/', methods=['POST'])
 @login_required

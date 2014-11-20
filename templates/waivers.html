@@ -90,6 +90,32 @@
 		</table>
 	</div>
 	{% endif %}
+	{% if trades %}
+	<div class="col-md-12">
+		<table class="table col-md-12">
+			<tr>
+				<th class="col-md-2">Tradee</th>
+				<th class="col-md-4" colspan="2">Gives</th>
+				<th class="col-md-4" colspan="2">Receives</th>
+				<th class="col-md-2">From</th>
+			</tr>
+			{% for trade in trades %}
+				{% if trade.firstplayer|length >= trade.secondplayer|length %}{% set largerlist = trade.firstplayer %}{% else %}{% set largerlist = trade.secondplayer %}{% endif %}
+				{% for player in largerlist %}
+				<tr>
+					{% set give = trade.firstplayer[loop.index - 1] %}{% set receive = trade.secondplayer[loop.index - 1] %}
+					<td class="col-md-2">{% if loop.index == 1 %}{{ trade.first.name }}{% endif %}</td>
+					<td class="col-md-1"><button class="btn btn-sm btn-default posicon-{{ give.position }}">{{ give.position }}</button></td>
+					<td class="col-md-2">{{ give.name }}</td>
+					<td class="col-md-1"><button class="btn btn-sm btn-default posicon-{{ player.position }}">{{ receive.position }}</button></td>
+					<td class="col-md-2">{{ receive.name }}</td>
+					<td class="col-md-2">{% if loop.index == 1 %}{{ trade.second.name }}{% endif %}</td>
+				</tr>
+				{% endfor %}
+			{% endfor %}
+		</table>
+	</div>
+	{% endif %}
 
 </div>
 
