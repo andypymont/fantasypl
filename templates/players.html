@@ -16,8 +16,8 @@
 			<th class="col-md-2">Player</th>
 			<th class="col-md-1">Club</th>
 			<th class="col-md-1">Owner</th>
-			<th class="col-md-1">Form <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='form', s=sorttype) }}"><span class="glyphicon glyphicon-sort"></span></a></th>
-			<th class="col-md-1">Season <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='score', s=sorttype) }}"><span class="glyphicon glyphicon-sort"></span></a></th>
+			<th class="col-md-1">Form <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='form') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
+			<th class="col-md-1">Season <a href="{{ url_for('players', pg=pagination.current, q=query, p=pos, s='score') }}"><span class="glyphicon glyphicon-sort"></span></a></th>
 		</tr>
 		{% for player in players %}
 		<tr>
