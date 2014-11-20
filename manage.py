@@ -134,6 +134,10 @@ def process_waivers():
 						claim['add'] = players[claim['add']['_id']]
 						claim['drop'] = players[claim['drop']['_id']]
 
+						# update sequence of claim for correct ordering in after-event views
+						claim['order'] = seq
+						seq += 1
+
 						# process claim
 						if claim['add']['team'] != '':
 							claim['status'] = 'failure'
@@ -147,9 +151,6 @@ def process_waivers():
 							claim['add']['onteam'] = cgw['week']
 							claim['drop']['team'] = ''
 							claim['drop']['startingxi'] = 0
-
-							claim['order'] = seq
-							seq += 1
 
 							# success, exit loop
 							break
