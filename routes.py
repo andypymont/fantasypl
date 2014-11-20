@@ -293,6 +293,9 @@ def players():
 		pos = ''
 
 	sorttype = request.args.get('s', 'score').lower()
+	if sorttype not in ('score', 'form'):
+		sorttype = 'score'
+
 	def search(playername):
 		return (query == '') or (query in playername)
 
