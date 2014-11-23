@@ -73,7 +73,7 @@ def record_lineups():
 		teams = set(p['team'] for p in lineups)
 		cgw['lineups'] = dict()
 		for team in teams:
-			cgw['lineups'][team] = [player for player in teams]
+			cgw['lineups'][team] = [player for player in lineups if player['team'] == team]
 
 		cgw['deadline'] = cgw['deadline'].isoformat()
 		cgw['waiver'] = cgw['waiver'].isoformat()
