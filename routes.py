@@ -51,8 +51,8 @@ def viewscore(weekno, fixtureno):
 			except IndexError:
 				abort(404)
 
-			homelineup = gw.get('lineups', dict()).get(fixture.get('home', ''), [])
-			awaylineup = gw.get('lineups', dict()).get(fixture.get('away', ''), [])
+			homelineup = sorted(gw.get('lineups', dict()).get(fixture.get('home', ''), []), key=sort_player)
+			awaylineup = sorted(gw.get('lineups', dict()).get(fixture.get('away', ''), []), key=sort_player)
 
 			return render_template('fixture.html', activepage='schedule', gameweek=gw, fixture=fixture, homelineup=homelineup, awaylineup=awaylineup)
 
