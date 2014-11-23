@@ -47,18 +47,21 @@ def last_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': True}), key=lambda gw: gw['week'])[-1]
 	rv['deadline'] = decode_iso_datetime(rv['deadline'])
 	rv['waiver'] = decode_iso_datetime(rv['waiver'])
+	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
 	return rv
 
 def current_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[0]
 	rv['deadline'] = decode_iso_datetime(rv['deadline'])
 	rv['waiver'] = decode_iso_datetime(rv['waiver'])
+	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
 	return rv
 
 def next_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[1]
 	rv['deadline'] = decode_iso_datetime(rv['deadline'])
 	rv['waiver'] = decode_iso_datetime(rv['waiver'])
+	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
 	return rv	
 
 def formation(players):
