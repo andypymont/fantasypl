@@ -75,7 +75,7 @@
 				{% else %}
 				{% set player = fixture.homelineup[x - 1] %}
 				<tr>
-					<td class="col-md-3"><input id="homeplayer{{ x }}" name="homeplayer" class="away-player-dropdown form-control" value="{{ player._id }}"></input></th>
+					<td class="col-md-3"><input id="homeplayer{{ x }}" name="homeplayer" class="home-player-dropdown form-control" value="{{ player._id }}"></input></th>
 					<td class="col-md-1"><input id="homestart{{ x }}" name="homestart{{ x }}" type="checkbox" class="form-control"{% if player.start %} checked="true"{% endif %}></input></th>
 					<td class="col-md-1"><input id="homefinish{{ x }}" name="homefinish{{ x }}" type="checkbox" class="form-control"{% if player.finish %} checked="true"{% endif %}></input></th>
 					<td class="col-md-1"></th>
