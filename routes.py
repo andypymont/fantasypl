@@ -300,13 +300,20 @@ def players():
 	if sorttype not in ('score', 'form'):
 		sorttype = 'score'
 
+	filt = request.args.get('f', 'all')
+	if filt not in ('all', 'free'):
+		filt = 'all'
+
 	def search(playername):
 		return (query == '') or (query in playername)
+
+	def status(team):
+		return (filt == 'all') or (team == '')
 
 	sort = dict(score=sort_player_score,
 				form=sort_player_form)[sorttype]
 
-	players = sorted(db.get('players', {'position': lambda x: pos in x, 'searchname': search, 'club': lambda x: x != ''}), key=sort)
+	players = sorted(db.get('players', {'position': lambda x: pos in x, 'searchname': search, 'club': lambda x: x != '', 'team': status}), key=sort)
 
 	pages = int(ceil(len(players) / 15.0))
 	page = int(request.args.get('pg', 1))
@@ -320,7 +327,7 @@ def players():
 	for player in players:
 		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
 
-	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sorttype=sorttype)
+	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sorttype=sorttype, filt=filt)
 
 @app.route('/players/add/', methods=['POST'])
 @login_required
