@@ -21,12 +21,15 @@ def get_player(name):
 		return None
 
 def new_player(name, position, club):
-	return dict(name=name,
-				position=position,
-				club=club,
-				team='',
-				startingxi=0,
-				searchname=unidecode(unicode(name.lower())))
+	return {'name': name,
+			'position': position,
+			'club': club,
+			'team': '',
+			'startingxi': 0,
+			'searchname': unidecode(unicode(name.lower())),
+			'form': [],
+			'totalscore': 0,
+			'_collection': 'players'}
 
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):

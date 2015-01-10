@@ -14,7 +14,7 @@ def sort_player_lineup(player):
 			player['name'])
 
 def sort_player_form(player):
-	return (-sum([f for f in player['form']]),
+	return (-sum([f for f in player.get('form', [])]),
 			dict(G=1, D=2, M=3, F=4)[player['position']],
 			player['name'])
 
