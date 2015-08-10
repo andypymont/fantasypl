@@ -227,10 +227,13 @@ def lineup_submit():
 		return redirect(url_for('lineup'))
 
 @app.route('/waivers/')
-@login_required
+#@login_required
 def waiver_claims():
 	cgw = current_gameweek()
 	view = request.args.get('view', 'own')
+
+	if current_user.get_id() is None:
+		view = 'league'
 
 	if cgw['waiver'] < datetime.now():
 		# we have passed the waiver deadline

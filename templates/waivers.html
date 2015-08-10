@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% if current_user.is_authenticated() %}
 <div class="container">
 	<p><h3>Waiver Claims</h3></p>
 
@@ -47,14 +48,20 @@
 	<p>You have no active waiver claims.</p>
 	{% endif %}
 </div>
+{% endif %}
 
 <div class="container">
 
 	<p><h3>Previous Claims</h3></p>
 
 	<ul class="pagination col-md-2">
+		{% if current_user.is_authenticated() %}
 		<li{% if view == 'own' %} class="active"{% endif %}><span><a href="{{ url_for('waiver_claims', week=week_pagination.current, view='own') }}">Yours</a></span></li>
 		<li{% if view == 'league' %} class="active"{% endif %}><span><a href="{{ url_for('waiver_claims', week=week_pagination.current, view='league') }}">League</a></span></li>
+		{% else %}
+		<li class="disabled"><span>Yours</span></li>
+		<li{% if view == 'league' %} class="active"{% endif %}><span><a href="{{ url_for('waiver_claims', week=week_pagination.current, view='league') }}">League</a></span></li>
+		{% endif %}
 	</ul>
 
 	<ul class="pagination col-md-10">
