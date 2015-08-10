@@ -7,7 +7,7 @@ from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
-from fantasypl import decode_iso_datetime, sort_player, sort_player_lineup, sort_player_form, sort_player_score
+from fantasypl import decode_iso_datetime, sort_player, sort_player_lineup, sort_player_form, sort_player_score, waiver_gameweek
 from functools import wraps
 
 def scorer_only(func):
@@ -229,19 +229,23 @@ def lineup_submit():
 @app.route('/waivers/')
 def waiver_claims():
 	cgw = current_gameweek()
+	wgw = waiver_gameweek()
+
+	print 'cgw %s' % cgw['week']
+	print 'wgw %s' % wgw['week']
+
 	view = request.args.get('view', 'own')
 
 	if current_user.get_id() is None:
 		view = 'league'
 
-	if cgw['waiver'] < datetime.now():
-		# we have passed the waiver deadline
-		current_claims = []
-		week = int(request.args.get('week', cgw['week']))
-	else:
-		current_claims = sorted([claim for claim in  db.get('claims', dict(user=current_user.get_id(), week=cgw['week']))],
-								key=lambda claim: claim['priority'])
+	current_claims = sorted([claim for claim in  db.get('claims', dict(user=current_user.get_id(), week=wgw['week']))],
+							key=lambda claim: claim['priority'])
+
+	if cgw['week'] == wgw['week']:
 		week = int(request.args.get('week', cgw['week'] - 1))
+	else:
+		week = int(request.args.get('week', cgw['week']))
 
 	claimquery = dict(week=week)
 	tradequery = dict(week=week)
@@ -258,7 +262,7 @@ def waiver_claims():
 
 	return render_template('waivers.html', activepage='waivers', current_claims=current_claims, prev_claims=prev_claims,
 										   trades=trades, current_claim_count=len(current_claims),
-										   week_pagination=week_pagination(week), waiver_deadline=cgw['waiver'], view=view)
+										   week_pagination=week_pagination(week), waiver_deadline=wgw['waiver'], view=view)
 
 @app.route('/waivers/update/', methods=['POST'])
 @login_required
@@ -268,14 +272,13 @@ def update_waiver_order():
 	except ValueError:
 		priorities = []
 
-	cgw = current_gameweek()
+	wgw = waiver_gameweek()
 
-	if datetime.now() >= cgw['waiver']:
+	if datetime.now() >= wgw['waiver']:
 		flash("The deadline for waivers this week has passed. You can no longer edit your claims.")
 
 	else:
-
-		current_claims = sorted(db.get('claims', dict(user=current_user.get_id(), week=cgw['week'])),
+		current_claims = sorted(db.get('claims', dict(user=current_user.get_id(), week=wgw['week'])),
 								key=lambda claim: claim['priority'])
 		deleted_claims = []
 
@@ -341,8 +344,10 @@ def add_player():
 		add = db.get_by_id(add_id)
 		drop = db.get_by_id(drop_id)
 
-		cw = current_gameweek()
-		waiver = waiver_status(add, cw['week'], cw['deadline'], cw['waiver'], next_gameweek()['waiver'])
+		cgw = current_gameweek()
+		wgw = waiver_gameweek()
+
+		waiver = waiver_status(add, cgw['week'], cgw['deadline'], cgw['waiver'], next_gameweek()['waiver'])
 
 		if waiver['addable']:
 
@@ -352,10 +357,10 @@ def add_player():
 				drop['startingxi'] = 0
 
 				db.save_all((add, drop))
-				add_waiver_claim(current_user.get_id(), current_user.get_name(), cw['week'], add, drop, 'success')
+				add_waiver_claim(current_user.get_id(), current_user.get_name(), cgw['week'], add, drop, 'success')
 
 			elif waiver['type'] == 'waiver':
-				add_waiver_claim(current_user.get_id(), current_user.get_name(), cw['week'], add, drop)
+				add_waiver_claim(current_user.get_id(), current_user.get_name(), wgw['week'], add, drop)
 
 	return redirect(request.args.get('next', url_for('lineup')))
 

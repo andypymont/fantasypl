@@ -57,6 +57,12 @@ def current_gameweek():
 	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
 	return rv
 
+def waiver_gameweek():
+	rv = current_gameweek()
+	if rv['waiver'] < datetime.now():
+		rv = next_gameweek()
+	return rv
+
 def next_gameweek():
 	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[1]
 	rv['deadline'] = decode_iso_datetime(rv['deadline'])
@@ -97,7 +103,7 @@ def pagination(current_page, pages):
 				next=(current_page < pages))
 
 def week_pagination(current_page):
-	return pagination(current_page, current_gameweek()['week'])
+	return pagination(current_page, (waiver_gameweek()['week'] - 1))
 
 def add_waiver_claim(user, username, week, add, drop, status=''):
 	claims = db.get('claims', dict(user=user, week=week))
@@ -121,7 +127,7 @@ def waiver_status(player, current_week, current_lineup_deadline, current_waiver_
 	elif last_on_team == current_week:
 		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
 	elif datetime.now() > current_lineup_deadline:
-		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
+		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	elif datetime.now() < current_waiver_deadline:
 		return dict(text='Waivers (%s)' % current_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	else:
