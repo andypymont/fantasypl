@@ -124,12 +124,12 @@ def waiver_status(player, current_week, current_lineup_deadline, current_waiver_
  	
 	if player['team'] != '':
 		return dict(text=player['team'], addable=False, type='owned')
-	elif last_on_team == current_week:
-		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
 	elif datetime.now() > current_lineup_deadline:
 		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	elif datetime.now() < current_waiver_deadline:
 		return dict(text='Waivers (%s)' % current_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
+	elif last_on_team == current_week:
+		return dict(text='Waivers (%s)' % next_waiver_deadline.strftime('%d %b'), addable=False, type='waiver')
 	else:
 		return dict(text='Free Agent', addable=True, type='free')
 
