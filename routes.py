@@ -227,7 +227,6 @@ def lineup_submit():
 		return redirect(url_for('lineup'))
 
 @app.route('/waivers/')
-#@login_required
 def waiver_claims():
 	cgw = current_gameweek()
 	view = request.args.get('view', 'own')
