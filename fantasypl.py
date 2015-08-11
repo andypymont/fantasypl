@@ -1,5 +1,5 @@
 from app import app, db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def decode_iso_datetime(iso_datetime):
 	return datetime.strptime(iso_datetime, '%Y-%m-%dT%H:%M:%S')
@@ -44,17 +44,48 @@ def next_opponents():
 	return dict([(club['name'], club['nextopponent']) for club in db.get('clubs')])
 
 def last_gameweek():
-	rv = sorted(db.get('gameweeks', {'completed': True}), key=lambda gw: gw['week'])[-1]
-	rv['deadline'] = decode_iso_datetime(rv['deadline'])
-	rv['waiver'] = decode_iso_datetime(rv['waiver'])
-	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
+	weeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
+	completed_weeks = [week for week in weeks if week['completed'] == True]
+
+	if len(completed_weeks) == 0:
+		rv = weeks[0]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype]) - timedelta(weeks=1)
+	else:
+		rv = completed_weeks[-1]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype])
+
+	return rv
+
+def next_gameweek():
+	weeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
+	incomplete_weeks = [week for week in weeks if week['completed'] == False]
+
+	if len(incomplete_weeks) <= 1:
+		rv = weeks[-1]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype]) + timedelta(weeks=1)
+	else:
+		rv = incomplete_weeks[1]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype])
+
 	return rv
 
 def current_gameweek():
-	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[0]
-	rv['deadline'] = decode_iso_datetime(rv['deadline'])
-	rv['waiver'] = decode_iso_datetime(rv['waiver'])
-	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
+	weeks = sorted(db.get('gameweeks'), key=lambda gw: gw['week'])
+	incomplete_weeks = [week for week in weeks if week['completed'] == False]
+
+	if len(incomplete_weeks) == 0:
+		rv = weeks[-1]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype]) + timedelta(weeks=1)
+	else:
+		rv = incomplete_weeks[0]
+		for datetype in ('deadline', 'waiver', 'conclusion'):
+			rv[datetype] = decode_iso_datetime(rv[datetype])
+
 	return rv
 
 def waiver_gameweek():
@@ -62,13 +93,6 @@ def waiver_gameweek():
 	if rv['waiver'] < datetime.now():
 		rv = next_gameweek()
 	return rv
-
-def next_gameweek():
-	rv = sorted(db.get('gameweeks', {'completed': False}), key=lambda gw: gw['week'])[1]
-	rv['deadline'] = decode_iso_datetime(rv['deadline'])
-	rv['waiver'] = decode_iso_datetime(rv['waiver'])
-	rv['conclusion'] = decode_iso_datetime(rv['conclusion'])
-	return rv	
 
 def formation(players):
 	rv = dict()
