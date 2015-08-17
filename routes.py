@@ -102,7 +102,7 @@ def openweek(weekno):
 	if gw:
 		undo_week_scoring(gw[0])
 
-	return redirect(url_for('scoring'))		
+	return redirect(url_for('scoring'))
 
 def goals_from_scorefixture_form(form, side, players):
 	goals = []
@@ -376,7 +376,7 @@ def json_team_players(teamid):
 
 @app.route('/json/players/club/<clubid>/')
 def json_club_players(clubid):
-	query = request.args.get('q', '')
+	query = request.args.get('q', '').lower()
 	club = db.get_by_id(clubid)
 
 	players = sorted(db.get('players', {'club': club['name'], 'searchname': lambda sn: (query in sn)}),
