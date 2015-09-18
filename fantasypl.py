@@ -1,5 +1,6 @@
 from app import app, db
 from datetime import datetime, timedelta
+from unidecode import unidecode
 
 def decode_iso_datetime(iso_datetime):
 	return datetime.strptime(iso_datetime, '%Y-%m-%dT%H:%M:%S')
@@ -156,6 +157,17 @@ def waiver_status(player, current_week, current_lineup_deadline, current_waiver_
 		return dict(text='Waivers (%s)' % current_waiver_deadline.strftime('%d %b'), addable=True, type='waiver')
 	else:
 		return dict(text='Free Agent', addable=True, type='free')
+
+def new_player(name, position, club):
+	return {'name': name,
+			'position': position,
+			'club': club,
+			'team': '',
+			'startingxi': 0,
+			'searchname': unidecode(unicode(name.lower())),
+			'form': [],
+			'totalscore': 0,
+			'_collection': 'players'}
 
 def do_week_scoring(gw):
 

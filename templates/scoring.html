@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
+	<h3>Create Player</h3>
+	<form role="form" method="post" action="{{ url_for('create_player') }}">
+		<div class="row">
+			<div class="col-md-5"><input id="playername" name="playername" class="form-control" placeholder="Player Name"></input></div>
+			<div class="col-md-1"><select id="position" name="position" class="position-dropdown form-control">
+				<option value="G">G</option>
+				<option value="D">D</option>
+				<option value="M">M</option>
+				<option value="F">F</option>
+			</select></div>
+			<div class="col-md-5"><select id="club" name="club" class="club-dropdown form-control">
+				{% for club in clubs %}<option value="{{ club.name }}">{{ club.name }}</option>{% endfor %}
+			</select></div>
+			<div class="col-md-1"><button type="submit" class="btn btn-primary">Create</button></div>
+		</div>
+	</form>
+
 	<h3>Gameweeks</h3>
 
 	<table class="table table-striped">

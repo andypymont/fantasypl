@@ -2,7 +2,7 @@ from app import app, db
 from auth import generate_password_hash
 from datetime import datetime, timedelta
 from flask.ext.script import Manager
-from fantasypl import current_gameweek, get_teams
+from fantasypl import current_gameweek, get_teams, new_player
 from inception import _contains
 from unidecode import unidecode
 
@@ -20,16 +20,6 @@ def get_player(name):
 	except IndexError:
 		return None
 
-def new_player(name, position, club):
-	return {'name': name,
-			'position': position,
-			'club': club,
-			'team': '',
-			'startingxi': 0,
-			'searchname': unidecode(unicode(name.lower())),
-			'form': [],
-			'totalscore': 0,
-			'_collection': 'players'}
 
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):

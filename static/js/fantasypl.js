@@ -265,6 +265,10 @@ $(document).ready(function() {
 		}
 	});
 
+	// Set up manager controls (create/transfer player):
+	$('.position-dropdown').select2();
+	$('.club-dropdown').select2();
+
 	// Set up fixture-scoring view:
 
 	$('#addhomegoal').click(function() { addGoal("home"); });

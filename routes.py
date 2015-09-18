@@ -7,7 +7,7 @@ from app import app, db
 from auth import current_user, load_user, login_manager, login_required
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
-from fantasypl import decode_iso_datetime, sort_player, sort_player_lineup, sort_player_form, sort_player_score, waiver_gameweek
+from fantasypl import decode_iso_datetime, new_player, sort_player, sort_player_lineup, sort_player_form, sort_player_score, waiver_gameweek
 from functools import wraps
 
 def scorer_only(func):
@@ -64,8 +64,25 @@ def scoring():
 	for gw in gameweeks:
 		gw['deadline'] = decode_iso_datetime(gw['deadline'])
 		gw['conclusion'] = decode_iso_datetime(gw['conclusion'])
+	clubs = sorted(db.get('clubs'), key=lambda club: club['name'])
 
-	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks)
+	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks, clubs=clubs)
+
+@app.route('/players/create/', methods=['POST'])
+@login_required
+@scorer_only
+def create_player():
+	playername = request.form.get('playername', '')
+	position = request.form.get('position', '')
+	club = request.form.get('club', '')
+
+	if '' in (playername, position, club):
+		flash("Insufficient information provided to create player")
+		return redirect(url_for('scoring'))
+	else:
+		p = new_player(playername, position, club)
+		db.save(p)
+		return redirect(url_for('players', q=p.get('searchname', '')))
 
 @app.route('/scoring/week/<int:weekno>/')
 @login_required
@@ -333,6 +350,18 @@ def players():
 		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sorttype=sorttype, filt=filt)
+
+@app.route('/teamofthemonth/')
+def teamofthemonth():
+	from manage import get_player
+	#players = [get_player(n) for n in ('joe hart', 'kolarov', 'cresswell', 'kompany', 'mangala', 'sagna', 'mahrez', 'yaya toure', 'andre ayew', 'callum wilson', 'bafetimbi')]
+	players = [get_player(n) for n in ('djilobodji', 'funes', 'jonny evans', 'de bruyne', 'toivonen', 'victor moses', 'alex song', 'heung', 'leandro rodri', 'borini', 'mbokani', 'jelavic')]
+	gw_now = current_gameweek()
+
+	for player in players:
+		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
+
+	return render_template('players.html', activepage='players', pagination=pagination(1,1), players=players)
 
 @app.route('/players/add/', methods=['POST'])
 @login_required
