@@ -84,6 +84,30 @@ def create_player():
 		db.save(p)
 		return redirect(url_for('players', q=p.get('searchname', '')))
 
+@app.route('/players/transfer/', methods=['POST'])
+@login_required
+@scorer_only
+def transfer_player():
+	player_id = request.form.get('transferplayer', 0)
+	new_club = request.form.get('newclub', '')
+
+	if player_id > 0:
+		player = db.get_by_id(player_id)
+
+	if (player_id == 0) or (not player):
+		flash("Player not found or not specified - please try again")
+		return redirect(url_for('scoring'))
+	elif new_club == '':
+		flash("No club specified - please try again")
+		return redirect(url_for('scoring'))
+	else:
+		if new_club == 'No PL Club':
+			player['club'] = ''
+		else:
+			player['club'] = new_club
+		db.save(player)
+		return redirect(url_for('players', q=player.get('searchname', '')))
+
 @app.route('/scoring/week/<int:weekno>/')
 @login_required
 @scorer_only
@@ -409,6 +433,14 @@ def json_club_players(clubid):
 	club = db.get_by_id(clubid)
 
 	players = sorted(db.get('players', {'club': club['name'], 'searchname': lambda sn: (query in sn)}),
+					 key=sort_player)
+
+	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})
+
+@app.route('/json/players/all/')
+def json_all_players():
+	query = request.args.get('q', '')
+	players = sorted(db.get('players', {'searchname': lambda sn: (query in sn)}),
 					 key=sort_player)
 
 	return jsonify({'players': [dict(id=player['_id'], text='%s %s' % (player['position'], player['name'])) for player in players]})

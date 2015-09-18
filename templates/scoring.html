@@ -18,7 +18,19 @@
 		</div>
 	</form>
 
-	<h3>Gameweeks</h3>
+	<h3>Transfer Player</h3>
+	<form role="form" method="post" action="{{ url_for('transfer_player') }}">
+		<div class="row">
+			<div class="col-md-6"><input id="transferplayer" name="transferplayer" class="form-control all-players-dropdown" placeholder="Player to transfer"></input></div>
+			<div class="col-md-5"><select id="newclub" name="newclub" class="club-dropdown form-control">
+				<option value="No PL Club">No PL Club</option>
+				{% for club in clubs %}<option value="{{ club.name }}">{{ club.name }}</option>{% endfor %}
+			</select></div>
+			<div class="col-md-1"><button type="submit" class="btn btn-primary">Action</button></div>
+		</div>
+	</form>
+
+	<h3>Gameweek Scoring</h3>
 
 	<table class="table table-striped">
 		<tr>
@@ -39,4 +51,8 @@
 
 	</table>
 </div>
+
+<script type="text/javascript">
+	var JSON_ALL_PLAYERS = "{{ url_for('json_all_players') }}";
+</script>
 {% endblock %}

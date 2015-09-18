@@ -269,6 +269,20 @@ $(document).ready(function() {
 	$('.position-dropdown').select2();
 	$('.club-dropdown').select2();
 
+	$('.all-players-dropdown').select2({
+		allowClear: true,
+		placeholder: "Select a player",
+		ajax: {
+			url: JSON_ALL_PLAYERS,
+			data: function(term, page) {
+				return { q: term };
+			},
+			results: function(data, page) {
+				return {results: data.players};
+			}
+		}
+	});
+
 	// Set up fixture-scoring view:
 
 	$('#addhomegoal').click(function() { addGoal("home"); });
