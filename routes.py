@@ -66,8 +66,9 @@ def scoring():
 		gw['deadline'] = decode_iso_datetime(gw['deadline'])
 		gw['conclusion'] = decode_iso_datetime(gw['conclusion'])
 	clubs = sorted(db.get('clubs'), key=lambda club: club['name'])
+	teams = sorted(db.get('users'), key=lambda user: user['name'])
 
-	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks, clubs=clubs)
+	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks, clubs=clubs, teams=teams)
 
 @app.route('/scoring/waivers/')
 @login_required
@@ -80,6 +81,58 @@ def process_waivers():
 @scorer_only
 def record_current_lineups():
 	record_lineups()
+
+@app.route('/scoring/trade/', methods=['POST'])
+@login_required
+@scorer_only
+def begin_trade():
+	teamnames = (request.form.get('team1', ''), request.form.get('team2', ''))
+
+	if len([teamname for teamname in set(teamnames) if teamname != '']) != 2:
+		flash("Did not find two unique team names to begin the trade - please try again")
+		return redirect(url_for('scoring'))
+	else:
+		teams = db.get('users', dict(name=lambda name: name in teamnames))
+		if len(teams) != 2:
+			flash("Could not find two users matching the usernames provided - please try again")
+			return redirect(url_for('scoring'))
+		else:
+			return redirect(url_for('trade', team1=teams[0]['_id'], team2=teams[1]['_id']))
+
+@app.route('/scoring/trade/<team1>/<team2>/', methods=['GET', 'POST'])
+@login_required
+@scorer_only
+def trade(team1, team2):
+	team1, team2 = db.get_by_id(team1), db.get_by_id(team2)
+
+	if (not team1) or (not team2):
+		abort(404)
+
+	if request.method == 'POST':
+		cgw = current_gameweek()
+		players = dict([(unicode(player['_id']), player) for player in db.get('players')])
+
+		firstplayer = [players.get(player) for player in request.form.getlist('firstplayer')]
+		secondplayer = [players.get(player) for player in request.form.getlist('secondplayer')]
+
+		for player in firstplayer:
+			player['team'] = team2['name']
+		for player in secondplayer:
+			player['team'] = team1['name']
+
+		trade = dict(
+			week=cgw['week'],
+			firstplayer=firstplayer,
+			secondplayer=secondplayer,
+			first=team1,
+			second=team2)
+
+		db.save_all(firstplayer + secondplayer)
+		db.save(trade, 'trades')
+
+		return redirect(url_for('scoring'))
+	else:
+		return render_template('trade.html', activepage="scoring", team1=team1, team2=team2)
 
 @app.route('/players/create/', methods=['POST'])
 @login_required
@@ -162,7 +215,6 @@ def changeweek(weekno, action):
 			update_next_fixtures()
 
 	return redirect(url_for('scoring'))
-
 
 def goals_from_scorefixture_form(form, side, players):
 	goals = []

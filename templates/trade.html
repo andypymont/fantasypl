@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<form role="form" method="post" action="{{ url_for('trade', team1=team1._id, team2=team2._id) }}">
+<div class="container">
+	<table id="trades" class="table table-striped col-md-12">
+		<tr>
+			<th class="col-md-5">{{ team1.name }} gives</th>
+			<th class="col-md-5">{{ team2.name }} gives</th>
+			<th class="col-md-2"><span id="addtrade" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></span></th>
+		</tr>
+	</table>
+</div>
+
+<div class="container">
+	<button class="btn btn-sm btn-primary" type="submit">Complete Trade</button>
+</div>
+</form>
+
+<script type="text/javascript">
+var JSON_TEAM1_PLAYERS = "{{ url_for('json_team_players', teamid=team1._id) }}";
+var JSON_TEAM2_PLAYERS = "{{ url_for('json_team_players', teamid=team2._id) }}";
+</script>
+{% endblock %}

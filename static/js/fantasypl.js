@@ -239,6 +239,45 @@ function addGoal(team) {
 	updateScore();
 }
 
+function deleteTrade(event) {
+	$(event.data.row).remove();
+}
+
+function configureTradeControls(trade) {
+	$(trade).find('.teamone-dropdown').each(function() { selectifyNewDropdown(this, "Select player", JSON_TEAM1_PLAYERS); });
+	$(trade).find('.teamtwo-dropdown').each(function() { selectifyNewDropdown(this, "Select player", JSON_TEAM2_PLAYERS); });
+	$(trade).find('.btn').click({row: trade}, deleteTrade);
+}
+
+function addTrade() {
+	// create a new table-row
+	newTrade = document.createElement('tr');
+	$(newTrade).addClass('trade');
+
+	// first column: cell containing drop-down for team 1's player
+	teamOneCell = document.createElement('td');
+	teamOneDropdown = document.createElement('input');
+	$(teamOneDropdown).attr('name', 'firstplayer').addClass('form-control teamone-dropdown').appendTo(teamOneCell);
+	$(teamOneCell).appendTo(newTrade);
+
+	// second column: cell containing drop-down for team 2's player
+	teamTwoCell = document.createElement('td');
+	teamTwoDropdown = document.createElement('input');
+	$(teamTwoDropdown).attr('name', 'secondplayer').addClass('form-control teamtwo-dropdown').appendTo(teamTwoCell);
+	$(teamTwoCell).appendTo(newTrade);
+
+	// third column: cell for button to delete this line
+	deleteCell = document.createElement('td');
+	deleteButton = document.createElement('span');
+	$(deleteButton).html('<span class="glyphicon glyphicon-trash" aria-hidden="true">').addClass("btn").addClass("btn-sm").addClass("btn-default");
+	$(deleteButton).appendTo(deleteCell);
+	$(deleteCell).appendTo(newTrade);
+
+	// add to the table and trigger function to set up the select2 dropdowns and delete button
+	$(newTrade).appendTo($("#trades"));
+	configureTradeControls(newTrade);
+}
+
 $(document).ready(function() {
 
 	// Set up lineup view:
@@ -265,9 +304,14 @@ $(document).ready(function() {
 		}
 	});
 
+	// Set up trade view:
+	$('#addtrade').click(function() { addTrade(); });
+
 	// Set up manager controls (create/transfer player):
+
 	$('.position-dropdown').select2();
 	$('.club-dropdown').select2();
+	$('.team-dropdown').select2();
 
 	$('.all-players-dropdown').select2({
 		allowClear: true,

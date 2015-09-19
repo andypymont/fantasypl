@@ -16,6 +16,19 @@
 		</tr>
 	</table>
 
+	<h3>Register Trade</h3>
+	<form role="form" method="post" action="{{ url_for('begin_trade') }}">
+		<div class="row">
+			<div class="col-md-5"><select id="team1" name="team1" class="team-dropdown form-control">
+				{% for team in teams %}<option value="{{ team.name }}">{{ team.name }}</option>{% endfor %}
+			</select></div>
+			<div class="col-md-5"><select id="team2" name="team2" class="team-dropdown form-control">
+				{% for team in teams %}<option value="{{ team.name }}">{{ team.name }}</option>{% endfor %}
+			</select></div>
+			<div class="col-md-2"><button type="submit" class="btn btn-sm btn-primary">Submit</button></div>
+		</div>
+	</form>
+
 	<h3>Create Player</h3>
 	<form role="form" method="post" action="{{ url_for('create_player') }}">
 		<div class="row">
