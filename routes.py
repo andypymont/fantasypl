@@ -75,12 +75,14 @@ def scoring():
 @scorer_only
 def process_waivers():
 	process_waivers_now()
+	return redirect(url_for('scoring'))
 
 @app.route('/scoring/setlineups/')
 @login_required
 @scorer_only
 def record_current_lineups():
 	record_lineups()
+	return redirect(url_for('scoring'))
 
 @app.route('/scoring/trade/', methods=['POST'])
 @login_required
