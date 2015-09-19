@@ -8,7 +8,7 @@ from auth import current_user, load_user, login_manager, login_required
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
 from fantasypl import decode_iso_datetime, new_player, sort_player, sort_player_lineup, sort_player_form, sort_player_score, waiver_gameweek
-from fantasypl import update_next_fixtures
+from fantasypl import update_next_fixtures, process_waivers_now, record_lineups
 from functools import wraps
 
 def scorer_only(func):
@@ -68,6 +68,18 @@ def scoring():
 	clubs = sorted(db.get('clubs'), key=lambda club: club['name'])
 
 	return render_template('scoring.html', activepage="scoring", gameweeks=gameweeks, clubs=clubs)
+
+@app.route('/scoring/waivers/')
+@login_required
+@scorer_only
+def process_waivers():
+	process_waivers_now()
+
+@app.route('/scoring/setlineups/')
+@login_required
+@scorer_only
+def record_current_lineups():
+	record_lineups()
 
 @app.route('/players/create/', methods=['POST'])
 @login_required

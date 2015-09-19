@@ -2,8 +2,8 @@ from app import app, db
 from auth import generate_password_hash
 from datetime import datetime, timedelta
 from flask.ext.script import Manager
-from fantasypl import current_gameweek, get_teams, new_player
-from fantasypl import update_next_fixtures as _update_next_fixtures
+from fantasypl import current_gameweek, get_teams, new_player, process_waivers_now
+from fantasypl import update_next_fixtures as _update_next_fixtures, process_waivers as _process_waivers, record_lineups as _record_lineups
 from inception import _contains
 from unidecode import unidecode
 
@@ -20,7 +20,6 @@ def get_player(name):
 		return db.get('players', {'searchname': _contains(unidecode(unicode(name.lower())))})[0]
 	except IndexError:
 		return None
-
 
 @manager.command
 def newuser(name, username, password, draftorder=0, token=None):
@@ -52,105 +51,15 @@ def update_next_fixtures():
 
 @manager.command
 def record_lineups():
-	cgw = current_gameweek()
-
-	if (cgw['deadline'] < datetime.now()) and (not cgw['conclusion'] < datetime.now()):
-		
-		lineups = db.get('players', dict(startingxi='1'))
-		teams = set(p['team'] for p in lineups)
-		cgw['lineups'] = dict()
-		for team in teams:
-			cgw['lineups'][team] = [player for player in lineups if player['team'] == team]
-
-		cgw['deadline'] = cgw['deadline'].isoformat()
-		cgw['waiver'] = cgw['waiver'].isoformat()
-		db.save(cgw)
+	_record_lineups()
 
 @manager.command
 def process_waivers_early():
-	cgw = current_gameweek()
-	minute_ago = datetime.now() - timedelta(minutes=1)
-
-	cgw['deadline'] = cgw['deadline'].isoformat()
-	cgw['waiver'] = datetime(year=minute_ago.year, month=minute_ago.month, day=minute_ago.day, hour=minute_ago.hour,
-							 minute=minute_ago.minute, second=0).isoformat()
-
-	db.save(cgw)
-
-	process_waivers()
+	process_waivers_now()
 
 @manager.command
 def process_waivers():
-	cgw = current_gameweek()
-
-	if cgw['waiver'] < datetime.now() and not cgw.get('waivers_done', False):
-
-		teams = get_teams(reverse=True)
-		players = db.get('players')
-		claims = db.get('claims', dict(week=cgw['week']))
-
-		# mark all players currently on teams
-		for player in players:
-			if player['team'] != '':
-				player['onteam'] = cgw['week']
-
-		# convert player list to dictionary so we can look up by id
-		players = dict([(player['_id'], player) for player in players])
-
-		def next_claim(team):
-			try:
-				return sorted([claim for claim in claims if claim['user'] == team['userid'] and claim['status'] == ''],
-							  key=lambda claim: claim['priority'])[0]
-
-			except IndexError:
-				return False
-
-		# process waiver claims
-		done = 0
-		seq = 0
-		while not done:
-			done = 1 # until we find out otherwise!
-
-			for team in teams:
-				while True:
-					claim = next_claim(team)
-					if claim:
-						done = 0
-
-						# update status of target player from master player list:
-						claim['add'] = players[claim['add']['_id']]
-						claim['drop'] = players[claim['drop']['_id']]
-
-						# update sequence of claim for correct ordering in after-event views
-						claim['order'] = seq
-						seq += 1
-
-						# process claim
-						if claim['add']['team'] != '':
-							claim['status'] = 'failure'
-							claim['whynot'] = 'player added by %s' % claim['add']['team']
-						elif claim['drop']['team'] != team['name']:
-							claim['status'] = 'failure'
-							claim['whynot'] = 'no longer have player to drop'
-						else:
-							claim['status'] = 'success'
-							claim['add']['team'] = team['name']
-							claim['add']['onteam'] = cgw['week']
-							claim['drop']['team'] = ''
-							claim['drop']['startingxi'] = 0
-
-							# success, exit loop
-							break
-
-					else:
-						# no more claims for this user, exit loop
-						break
-
-		# save changes
-		cgw = db.get_by_id(cgw['_id'])
-		cgw['waivers_done'] = True
-
-		db.save_all(players.values() + teams + claims + [cgw])
+	_process_waivers()
 
 if __name__ == '__main__':
 	manager.run()

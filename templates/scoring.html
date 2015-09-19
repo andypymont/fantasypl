@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container">
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-8">Management Functions</th>
+			<th class="col-md-4"></th>
+		</tr>
+		<tr>
+			<td class="col-md-8">Record the lineups for the current week</td>
+			<td class="col-md-4"><a href="{{ url_for('record_current_lineups') }}"<button class="btn btn-sm btn-primary">go</button></a></td>
+		</tr>
+		<tr>
+			<td class="col-md=8">Process waivers immediately (ignoring usual timing)</td>
+			<td class="col-md-4"><a href="{{ url_for('process_waivers') }}"><button class="btn btn-sm btn-primary">go</button></a></td>
+		</tr>
+	</table>
+
 	<h3>Create Player</h3>
 	<form role="form" method="post" action="{{ url_for('create_player') }}">
 		<div class="row">
@@ -14,7 +29,7 @@
 			<div class="col-md-5"><select id="club" name="club" class="club-dropdown form-control">
 				{% for club in clubs %}<option value="{{ club.name }}">{{ club.name }}</option>{% endfor %}
 			</select></div>
-			<div class="col-md-1"><button type="submit" class="btn btn-primary">Create</button></div>
+			<div class="col-md-1"><button type="submit" class="btn btn-sm btn-primary">Create</button></div>
 		</div>
 	</form>
 
@@ -26,7 +41,7 @@
 				<option value="No PL Club">No PL Club</option>
 				{% for club in clubs %}<option value="{{ club.name }}">{{ club.name }}</option>{% endfor %}
 			</select></div>
-			<div class="col-md-1"><button type="submit" class="btn btn-primary">Action</button></div>
+			<div class="col-md-1"><button type="submit" class="btn btn-sm btn-primary">Action</button></div>
 		</div>
 	</form>
 
