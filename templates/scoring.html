@@ -37,7 +37,8 @@
 			<th class="col-md-1">#</th>
 			<th class="col-md-3">Deadline</th>
 			<th class="col-md-3">Conclusion</th>
-			<th class="col-md-5">Scoring</th>
+			<th class="col-md-2">Completion</th>
+			<th class="col-md-3">Scoring</th>
 		</tr>
 
 		{% for gameweek in gameweeks %}
@@ -45,7 +46,14 @@
 			<td class="col-md-1">{{ gameweek.week }}</th>
 			<td class="col-md-3">{{ gameweek.deadline|datetime_deadline }}</th>
 			<td class="col-md-3">{{ gameweek.conclusion|datetime_deadline }}</th>
-			<td class="col-md-5">{% if gameweek.scored %}completed &nbsp;&mdash;&nbsp; <a href="{{ url_for('openweek', weekno=gameweek.week) }}"><button class="btn btn-sm btn-warning">reopen</button></a>{% else %}<a href="{{ url_for('scoreweek', weekno=gameweek.week) }}"><button class="btn btn-sm btn-primary">score</button></a>&nbsp;<a href="{{ url_for('closeweek', weekno=gameweek.week) }}"><button class="btn btn-sm btn-warning">close</button></a>{% endif %}</th>
+			<td class="col-md-2">
+				{% if gameweek.completed %}<a href="{{ url_for('changeweek', weekno=gameweek.week, action='activate') }}"><button class="btn btn-sm btn-warning">activate</button></a>
+				{% else %}<a href="{{ url_for('changeweek', weekno=gameweek.week, action='complete') }}"><button class="btn btn-sm btn-primary">complete</button></a>{% endif %}
+			</td>
+			<td class="col-md-3">
+				{% if gameweek.scored %}completed &nbsp;&mdash;&nbsp; <a href="{{ url_for('changeweek', weekno=gameweek.week, action='open') }}"><button class="btn btn-sm btn-warning">reopen</button></a>
+				{% else %}<a href="{{ url_for('scoreweek', weekno=gameweek.week) }}"><button class="btn btn-sm btn-primary">score</button></a>&nbsp;<a href="{{ url_for('changeweek', weekno=gameweek.week, action='close') }}"><button class="btn btn-sm btn-warning">close</button></a>{% endif %}
+			</td>
 		</tr>
 		{% endfor %}
 

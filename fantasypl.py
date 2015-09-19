@@ -274,3 +274,13 @@ def update_league_table():
 		team['score'] = sum([result.get('score', 0) for result in results if result.get('team', '') == team.get('name', '')])
 
 	db.save_all(teams)
+
+def update_next_fixtures():
+	clubs = dict([(c['_id'], c) for c in db.get('clubs')])
+	fixtures = current_gameweek()['fixtures']
+
+	for fixture in fixtures:
+		clubs[fixture['home']['_id']]['nextopponent'] = '%s (H)' % fixture['away']['name']
+		clubs[fixture['away']['_id']]['nextopponent'] = '%s (A)' % fixture['home']['name']
+
+	db.save_all(clubs.values())

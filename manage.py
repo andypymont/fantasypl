@@ -3,6 +3,7 @@ from auth import generate_password_hash
 from datetime import datetime, timedelta
 from flask.ext.script import Manager
 from fantasypl import current_gameweek, get_teams, new_player
+from fantasypl import update_next_fixtures as _update_next_fixtures
 from inception import _contains
 from unidecode import unidecode
 
@@ -47,14 +48,7 @@ def complete_gameweeks():
 
 @manager.command
 def update_next_fixtures():
-	clubs = dict([(c['_id'], c) for c in db.get('clubs')])
-	fixtures = current_gameweek()['fixtures']
-
-	for fixture in fixtures:
-		clubs[fixture['home']['_id']]['nextopponent'] = '%s (H)' % fixture['away']['name']
-		clubs[fixture['away']['_id']]['nextopponent'] = '%s (A)' % fixture['home']['name']
-
-	db.save_all(clubs.values())
+	_update_next_fixtures()
 
 @manager.command
 def record_lineups():

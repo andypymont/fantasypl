@@ -8,6 +8,7 @@ from auth import current_user, load_user, login_manager, login_required
 from fantasypl import get_lineup, get_fixture_players, get_teams, next_opponents, current_gameweek, last_gameweek, next_gameweek, formation
 from fantasypl import valid_formation, pagination, week_pagination, add_waiver_claim, waiver_status, do_week_scoring, undo_week_scoring
 from fantasypl import decode_iso_datetime, new_player, sort_player, sort_player_lineup, sort_player_form, sort_player_score, waiver_gameweek
+from fantasypl import update_next_fixtures
 from functools import wraps
 
 def scorer_only(func):
@@ -125,25 +126,31 @@ def scoreweek(weekno):
 		else:
 			return render_template('scoreweek.html', activepage="scoring", gameweek=gw)
 
-@app.route('/scoring/week/<int:weekno>/close/')
+@app.route('/scoring/week/<int:weekno>/<action>/')
 @login_required
 @scorer_only
-def closeweek(weekno):
+def changeweek(weekno, action):
+	if action not in ('open', 'close', 'complete', 'activate'):
+		abort(404)
+	
 	gw = db.get('gameweeks', dict(week=weekno))
 	if gw:
-		do_week_scoring(gw[0])
+		gw = gw[0]
+		if action == 'close':
+			do_week_scoring(gw)
+		elif action == 'open':
+			undo_week_scoring(gw)
+		elif action == 'complete':
+			gw['completed'] = True
+			db.save(gw)
+			update_next_fixtures()
+		elif action == 'activate':
+			gw['completed'] = False
+			db.save(gw)
+			update_next_fixtures()
 
 	return redirect(url_for('scoring'))
 
-@app.route('/scoring/week/<int:weekno>/open/')
-@login_required
-@scorer_only
-def openweek(weekno):
-	gw = db.get('gameweeks', dict(week=weekno))
-	if gw:
-		undo_week_scoring(gw[0])
-
-	return redirect(url_for('scoring'))
 
 def goals_from_scorefixture_form(form, side, players):
 	goals = []
