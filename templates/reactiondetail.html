@@ -14,7 +14,13 @@
 				<td class="col-md-1"><button type="button" class="btn btn-sm btn-default posicon posicon-{{ player.position }}">{{ player.position }}</button></td>
 				<td class="col-md-{% if playerlist.score %}2{% else %}3{% endif %}">{{ player.name }}</td>
 				<td class="col-md-2">{{ player.team }}</td>
-				{% if playerlist.scores %}<td class="col-md-1">{% if player.score %}<span class="label label-{{ player.score|score_class }}">{{ player.score  }}</span>{% else %}<span class="label label-danger">0</span>{% endif %}</td>{% endif %}
+				{% if playerlist.scores %}<td class="col-md-1">
+					{% if playerlist.scores == 'week' %}
+						{% if player.score %}<span class="label label-{{ player.score|score_class }}">{{ player.score  }}</span>{% else %}<span class="label label-danger">0</span>{% endif %}</td>
+					{% else %}
+						{% if player.score %}{{ player.score }}{% else %}0{% endif %}
+					{% endif %}</td>
+				{% endif %}
 			</tr>
 			{% endfor %}
 		</table>
