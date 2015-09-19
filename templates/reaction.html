@@ -7,14 +7,12 @@
 	<table class="table table-striped">
 		<tr>
 			<th class="col-md-2">Date</th>
-			<th class="col-md-2"></th>
-			<th class="col-md-8">Title</th>
+			<th class="col-md-10">Description</th>
 		</tr>
 		{% for entry in entries %}
 		<tr>
 			<td class="col-md-2">{{ entry.date|fixture_date }}</th>
-			<td class="col-md-2"></th>
-			<td class="col-md-8"><a href="{{ url_for('reaction_detail', slug=entry.slug) }}">{{ entry.title }}</a></th>
+			<td class="col-md-10">{% if entry.icon %}<span class="col-md-1"><img src="{{ url_for('static', filename=('images/reaction-icons/' + entry.icon)) }}" alt="reaction article icon"></img></span>{% endif %}<a href="{{ url_for('reaction_detail', slug=entry.slug) }}">{{ entry.title }}</a></th>
 		</tr>
 		{% endfor %}
 	</table>

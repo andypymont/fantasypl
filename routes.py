@@ -450,7 +450,7 @@ def players():
 
 @app.route('/reaction/')
 def reaction():
-	entries = db.get('reaction')
+	entries = reversed(sorted(db.get('reaction'), key=lambda x: x['date']))
 	return render_template('reaction.html', activepage='reaction', entries=entries)
 
 @app.route('/reaction/<slug>')
