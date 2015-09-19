@@ -82,11 +82,12 @@
 	  </div>
 	</div>
 	<script type="text/javascript">
-	var JSON_TEAM_PLAYERS = "{{ url_for('json_team_players', teamid=current_user.get_dbid()) }}"
+	var JSON_TEAM_PLAYERS = "{{ url_for('json_team_players', teamid=current_user.get_dbid()) }}";
 	</script>
 	{% endif %}
 
 </div>
-
-
+<script type="text/javascript">
+var PAGENAME = 'players';
+</script>
 {% endblock %}

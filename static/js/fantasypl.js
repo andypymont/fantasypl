@@ -280,127 +280,130 @@ function addTrade() {
 
 $(document).ready(function() {
 
-	// Set up lineup view:
+	if (PAGENAME == 'lineup') {
+		$('.startercheck').change(checkboxToggle);
+		$('.subcheck').change(checkboxToggle);
+		$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
+		$("#priorities").val(currentOrder());
 
-	$('.startercheck').change(checkboxToggle);
-	$('.subcheck').change(checkboxToggle);
-	$('.deadline').text(prettyDate(new Date(TIME_DEADLINE)));
-	$("#priorities").val(currentOrder());
+		updateFormationValidity();
+	}
 
-	updateFormationValidity();
-
-	// Set up players view:
-
-	$('.player-dropdown').select2({
-		placeholder: "Select a player",
-		ajax: {
-			url: JSON_TEAM_PLAYERS,
-			data: function(term, page) {
-				return { q: term };
-			},
-			results: function(data, page) {
-				return {results: data.players};
+	if (PAGENAME == 'players') {
+		$('.player-dropdown').select2({
+			placeholder: "Select a player",
+			ajax: {
+				url: JSON_TEAM_PLAYERS,
+				data: function(term, page) {
+					return { q: term };
+				},
+				results: function(data, page) {
+					return {results: data.players};
+				}
 			}
-		}
-	});
+		});
+	}
 
-	// Set up trade view:
-	$('#addtrade').click(function() { addTrade(); });
+	if (PAGENAME == 'trade') {
+		$('#addtrade').click(function() { addTrade(); });
+	}
 
-	// Set up manager controls (create/transfer player):
+	if (PAGENAME == 'scoring') {
+		$('.position-dropdown').select2();
+		$('.club-dropdown').select2();
+		$('.team-dropdown').select2();
 
-	$('.position-dropdown').select2();
-	$('.club-dropdown').select2();
-	$('.team-dropdown').select2();
-
-	$('.all-players-dropdown').select2({
-		allowClear: true,
-		placeholder: "Select a player",
-		ajax: {
-			url: JSON_ALL_PLAYERS,
-			data: function(term, page) {
-				return { q: term };
-			},
-			results: function(data, page) {
-				return {results: data.players};
+		$('.all-players-dropdown').select2({
+			allowClear: true,
+			placeholder: "Select a player",
+			ajax: {
+				url: JSON_ALL_PLAYERS,
+				data: function(term, page) {
+					return { q: term };
+				},
+				results: function(data, page) {
+					return { results: data.players };
+				}
 			}
-		}
-	});
+		});
+	}
 
-	// Set up fixture-scoring view:
+	if (PAGENAME == 'scorefixture') {
 
-	$('#addhomegoal').click(function() { addGoal("home"); });
-	$('#addawaygoal').click(function() { addGoal("away"); });
+		$('#addhomegoal').click(function() { addGoal("home"); });
+		$('#addawaygoal').click(function() { addGoal("away"); });
 
-	$('tr.homegoal').each(function() { configureGoalControls(this, 'home'); });
-	$('tr.awaygoal').each(function() { configureGoalControls(this, 'away'); });
+		$('tr.homegoal').each(function() { configureGoalControls(this, 'home'); });
+		$('tr.awaygoal').each(function() { configureGoalControls(this, 'away'); });
 
-	$('.home-player-dropdown').select2({
-		allowClear: true,
-		placeholder: "Select a player",
-		ajax: {
-			url: JSON_HOME_PLAYERS,
-			data: function(term, page) {
-				return { q: term };
-			},
-			results: function(data, page) {
-				var results = data.players;
-				var alreadypicked = getSelectedPlayers('home');
+		$('.home-player-dropdown').select2({
+			allowClear: true,
+			placeholder: "Select a player",
+			ajax: {
+				url: JSON_HOME_PLAYERS,
+				data: function(term, page) {
+					return { q: term };
+				},
+				results: function(data, page) {
+					var results = data.players;
+					var alreadypicked = getSelectedPlayers('home');
 
-				for ( var i=0; i<results.length; i++ ) {
-					if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
-						results[i].disabled = true;
+					for ( var i=0; i<results.length; i++ ) {
+						if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
+							results[i].disabled = true;
+						};
 					};
-				};
 
-				return {results: results};
-			}
-		},
-		initSelection: function(element, callback) {
-			var id = $(element).val();
-			if (id != "") {
-				$.ajax(JSON_PLAYER_BY_ID, {
-					data: {id: id},
-					dataType: "json"
-				}).done(function(data) {
-					callback(data.players[0]);
-				});
-			}
-		}
-	});
-
-	$('.away-player-dropdown').select2({
-		allowClear: true,
-		placeholder: "Select a player",
-		ajax: {
-			url: JSON_AWAY_PLAYERS,
-			data: function(term, page) {
-				return { q: term };
+					return {results: results};
+				}
 			},
-			results: function(data, page) {
-				var results = data.players;
-				var alreadypicked = getSelectedPlayers('away');
+			initSelection: function(element, callback) {
+				var id = $(element).val();
+				if (id != "") {
+					$.ajax(JSON_PLAYER_BY_ID, {
+						data: {id: id},
+						dataType: "json"
+					}).done(function(data) {
+						callback(data.players[0]);
+					});
+				}
+			}
+		});
 
-				for ( var i=0; i<results.length; i++ ) {
-					if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
-						results[i].disabled = true;
+		$('.away-player-dropdown').select2({
+			allowClear: true,
+			placeholder: "Select a player",
+			ajax: {
+				url: JSON_AWAY_PLAYERS,
+				data: function(term, page) {
+					return { q: term };
+				},
+				results: function(data, page) {
+					var results = data.players;
+					var alreadypicked = getSelectedPlayers('away');
+
+					for ( var i=0; i<results.length; i++ ) {
+						if ( $.inArray(results[i].id, alreadypicked) > -1 ) {
+							results[i].disabled = true;
+						};
 					};
-				};
 
-				return {results: results};
+					return {results: results};
+				}
+			},
+			initSelection: function(element, callback) {
+				var id = $(element).val();
+				if (id != "") {
+					$.ajax(JSON_PLAYER_BY_ID, {
+						data: {id: id},
+						dataType: "json"
+					}).done(function(data) {
+						callback(data.players[0]);
+					});
+				}
 			}
-		},
-		initSelection: function(element, callback) {
-			var id = $(element).val();
-			if (id != "") {
-				$.ajax(JSON_PLAYER_BY_ID, {
-					data: {id: id},
-					dataType: "json"
-				}).done(function(data) {
-					callback(data.players[0]);
-				});
-			}
-		}
-	});
+		});
+
+	}
 
 });

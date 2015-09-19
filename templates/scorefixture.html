@@ -125,6 +125,7 @@
 </form></div>
 
 <script type="text/javascript">
+	var PAGENAME = 'scorefixture';
 	var JSON_HOME_PLAYERS = "{{ url_for('json_club_players', clubid=fixture.home._id) }}";
 	var JSON_AWAY_PLAYERS = "{{ url_for('json_club_players', clubid=fixture.away._id) }}";
 	var JSON_PLAYER_BY_ID = "{{ url_for('json_player') }}";
