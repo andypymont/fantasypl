@@ -1,6 +1,5 @@
-import os
 from flask import Flask
-from inception import Database
+from inception import MySQLDatabase
 
 app = Flask(__name__)
 
@@ -9,5 +8,12 @@ try:
 	app.config.update(settings)
 except ImportError:
 	pass
-	
-db = Database(app.config.get('DATABASE', ':memory:'))
+
+hostaddress = app.config.get('DATABASE_HOSTADDRESS', '')
+dbname = app.config.get('DATABASE_NAME', '')
+username = app.config.get('DATABASE_USERNAME', '')
+password = app.config.get('DATABASE_PASSWORD', '')
+
+db = MySQLDatabase(hostaddress, dbname, username, password)
+
+#db = Database(app.config.get('DATABASE', ':memory:'))
