@@ -6,7 +6,7 @@
 	</div>
 
 	{% for playerlist in entry.lists %}
-	<div class="col-md-6">
+	<div class="col-md-6{% if loop.index == loop.length %}{% if (loop.length % 2) == 1 %} col-md-offset-3{% endif %}{% endif %}">
 		<h3>{{ playerlist.title }}</h3>
 		<table class="table table-striped">
 			{% for player in playerlist.players %}
