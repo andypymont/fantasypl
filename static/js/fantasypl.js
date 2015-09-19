@@ -280,6 +280,8 @@ function addTrade() {
 
 $(document).ready(function() {
 
+	$('[data-toggle="tooltip"]').tooltip();
+
 	if (PAGENAME == 'lineup') {
 		$('.startercheck').change(checkboxToggle);
 		$('.subcheck').change(checkboxToggle);

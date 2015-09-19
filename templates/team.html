@@ -8,11 +8,12 @@
         <table class="table table-condensed">
           <tr>
             <th class="col-md-1">Position</th>
-            <th class="col-md-3">Name</th>
+            <th class="col-md-2">Name</th>
             <th class="col-md-2">Team</th>
-            <th class="col-md-3">Next Match</th>
+            <th class="col-md-2">Next Match</th>
             <th class="col-md-2">Form</th>
             <th class="col-md-1">Season</th>
+            <th class="col-md-2 hidden-sm">Reaction</th>
           </tr>
           {% for player in players %}
           <tr class="starterrow" id="starterrow{{ player._id }}">
@@ -22,6 +23,7 @@
             <td>{{ next_opponents[player.club] }}</td>
             <td>{% for form in player.form %}<span class="label label-{{ form|score_class }}">{{ form }}</span>&nbsp;{% endfor %}</td>
             <td>{{ player.totalscore }}</td>
+            <td class="hidden-sm">{% for reaction in player.reaction %}<a href="{{ url_for('reaction_detail', slug=reaction.slug) }}"><img src="{{ url_for('static', filename=('images/reaction-icons/' + reaction.icon)) }}" data-toggle="tooltip" title="{{ reaction.title }}"></img></a>{% endfor %}</td>
           </tr>
           {% endfor %}
         </table>

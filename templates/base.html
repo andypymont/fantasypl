@@ -46,7 +46,7 @@
             <li{% if activepage == "lineup" %} class="active"{% endif %}><a href="{{ url_for('lineup') }}">Lineup</a></li>
             <li{% if activepage == "waivers" %} class="active"{% endif %}><a href="{{ url_for('waiver_claims') }}">Waivers</a></li>
             <li{% if activepage == 'players' %} class="active"{% endif %}><a href="{{ url_for('players') }}">Players</a></li>
-            <!--<li{% if activepage == 'reaction' %} class="active"{% endif %}><a href="{{ url_for('reaction') }}">Reaction</a></li>-->
+            <li{% if activepage == 'reaction' %} class="active"{% endif %}><a href="{{ url_for('reaction') }}">Reaction</a></li>
             {% if current_user.is_authenticated() %}{% if current_user.is_scorer() %}<li{% if activepage == 'scoring' %} class="active"{% endif %}><a href="{{ url_for('scoring') }}">Scoring</a></li>{% endif %}{% endif %}
           </ul>
           <form class="navbar-form navbar-left" role="search" action="{{ url_for('players') }}">
