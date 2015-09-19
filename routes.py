@@ -448,17 +448,18 @@ def players():
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sorttype=sorttype, filt=filt)
 
-@app.route('/teamofthemonth/')
-def teamofthemonth():
-	from manage import get_player
-	#players = [get_player(n) for n in ('joe hart', 'kolarov', 'cresswell', 'kompany', 'mangala', 'sagna', 'mahrez', 'yaya toure', 'andre ayew', 'callum wilson', 'bafetimbi')]
-	players = [get_player(n) for n in ('djilobodji', 'funes', 'jonny evans', 'de bruyne', 'toivonen', 'victor moses', 'alex song', 'heung', 'leandro rodri', 'borini', 'mbokani', 'jelavic')]
-	gw_now = current_gameweek()
+@app.route('/reaction/')
+def reaction():
+	entries = db.get('reaction')
+	return render_template('reaction.html', activepage='reaction', entries=entries)
 
-	for player in players:
-		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
-
-	return render_template('players.html', activepage='players', pagination=pagination(1,1), players=players)
+@app.route('/reaction/<slug>')
+def reaction_detail(slug):
+	entry = db.get('reaction', dict(slug=slug))
+	if not entry:
+		abort(404)
+	else:
+		return render_template('reactiondetail.html', activepage='reaction', entry=entry[0])
 
 @app.route('/players/add/', methods=['POST'])
 @login_required

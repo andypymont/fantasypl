@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+
+	<h3>Reaction &amp; Analysis</h3>
+
+	<table class="table table-striped">
+		<tr>
+			<th class="col-md-2">Date</th>
+			<th class="col-md-2"></th>
+			<th class="col-md-8">Title</th>
+		</tr>
+		{% for entry in entries %}
+		<tr>
+			<td class="col-md-2">{{ entry.date|fixture_date }}</th>
+			<td class="col-md-2"></th>
+			<td class="col-md-8"><a href="{{ url_for('reaction_detail', slug=entry.slug) }}">{{ entry.title }}</a></th>
+		</tr>
+		{% endfor %}
+	</table>
+
+</div>
+
+<script type="text/javascript">
+var PAGENAME = 'reaction';
+</script>
+{% endblock %}
