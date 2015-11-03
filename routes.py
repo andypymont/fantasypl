@@ -448,6 +448,19 @@ def players():
 
 	return render_template('players.html', activepage="players", pagination=pagin, players=players, query=query, pos=pos, sorttype=sorttype, filt=filt)
 
+@app.route('/teamofthemonth/')
+def teamofthemonth():
+	from manage import get_player
+
+	gw_now = current_gameweek()
+
+	players = [get_player(p) for p in ('butland', 'glen johns', 'kosci', 'smalling', 'bellerin', 'wijna', 'de bruyne', 'ozil', 'graziano p', 'ighalo', 'jamie vardy')]
+
+	for player in players:
+		player['waiver'] = waiver_status(player, gw_now['week'], gw_now['deadline'], gw_now['waiver'], next_gameweek()['waiver'])
+
+	return render_template('players.html', activepage='players', pagination=pagination(1,1), players=players, query='', pos='', sorttype='score', filt='all')
+
 @app.route('/reaction/')
 def reaction():
 	entries = reversed(sorted(db.get('reaction'), key=lambda x: x['date']))
